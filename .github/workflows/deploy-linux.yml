@@ -15,10 +15,7 @@ jobs:
   # name of the job to run. Can be anything.
   deploy:
     # Docker based operating system to load. Windows and Mac are also available
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ubuntu-latest
 
     steps:
       # Defining a custom shell command to run for this job
@@ -48,3 +45,7 @@ jobs:
         run: cargo test
       - name: Build
         run: cargo build --release
+      - name: Create dist folder
+        run: mkdir dist
+      - name: Copy into dist
+        run: cp target/release/platformer_with_level_editor dist/
