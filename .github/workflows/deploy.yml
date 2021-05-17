@@ -1,5 +1,5 @@
 # This is the name that shows up in the GitHub Actions interface
-name: Deploy
+name: Deploy Linux
 
 # When should this Github Action run?
 on:
