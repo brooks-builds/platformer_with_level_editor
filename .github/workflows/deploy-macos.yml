@@ -1,5 +1,5 @@
 # This is the name that shows up in the GitHub Actions interface
-name: Deploy Linux
+name: Deploy MacO
 
 # When should this Github Action run?
 on:

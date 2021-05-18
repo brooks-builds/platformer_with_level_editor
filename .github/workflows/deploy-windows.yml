@@ -1,5 +1,5 @@
 # This is the name that shows up in the GitHub Actions interface
-name: Deploy Linux
+name: Deploy Windows
 
 # When should this Github Action run?
 on:
@@ -45,4 +45,4 @@ jobs:
       - name: Create dist folder
         run: mkdir dist
       - name: Copy into dist
-        run: copy target/release/platformer_with_level_editor.exe dist/
+        run: copy target/release/platformer_with_level_editor.exe dist/windows-platformer.exe
