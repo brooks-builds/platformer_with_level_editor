@@ -1,7 +1,7 @@
 #[derive(Clone, Copy)]
 pub enum Navigation {
     TitleScreen,
-    Settings,
+    _Settings,
 }
 
 impl Default for Navigation {

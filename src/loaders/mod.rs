@@ -1,16 +1,19 @@
-use bbecs::get_resource;
-use bbecs::world::{World, WorldMethods};
+use bbecs::world::World;
 use crossbeam::channel::Receiver;
 use eyre::Result;
-use ggez::graphics::{Scale, Text, TextFragment, WHITE};
+use ggez::Context;
 
 use crate::events::event::Event;
 use crate::events::EventManager;
 use crate::states::navigation::Navigation;
-use bbecs::resources::resource::ResourceCast;
+
+use self::title_screen::TitleScreenLoader;
+
+mod title_screen;
 
 pub struct LoaderManager {
     event_receiver: Receiver<Event>,
+    title_screen: TitleScreenLoader,
 }
 
 impl LoaderManager {
@@ -19,36 +22,23 @@ impl LoaderManager {
             .subscribe(vec![
                 Event::NavigatingTo(Navigation::TitleScreen).to_string()
             ]);
+        let title_screen = TitleScreenLoader;
 
-        Self { event_receiver }
+        Self {
+            event_receiver,
+            title_screen,
+        }
     }
 
-    pub fn update(&mut self, world: &mut World) -> Result<()> {
+    pub fn update(&mut self, world: &mut World, context: &mut Context) -> Result<()> {
         while let Ok(event) = self.event_receiver.try_recv() {
             if let Event::NavigatingTo(target) = event {
                 match target {
-                    Navigation::TitleScreen => self.load_title_screen(world)?,
-                    Navigation::Settings => {}
+                    Navigation::TitleScreen => self.title_screen.load(world, context)?,
+                    Navigation::_Settings => {}
                 }
             }
         }
-        Ok(())
-    }
-
-    fn load_title_screen(&mut self, world: &mut World) -> Result<()> {
-        let title = {
-            let game_name: &String;
-            get_resource!(game_name, world, "game name");
-            let title_font_size: &f32;
-            get_resource!(title_font_size, world, "title font size");
-            Text::new(
-                TextFragment::new(game_name.clone())
-                    .color(WHITE)
-                    .scale(Scale::uniform(*title_font_size)),
-            )
-        };
-
-        world.spawn_entity()?.with_component("text", title)?;
         Ok(())
     }
 }
