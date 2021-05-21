@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 ggez = "0.5.1"
 eyre = "0.6.5"
-bbecs = "0.2.0"
+bbecs = { path = "../rust_workspace/bbecs" }
 crossbeam = "0.8.0"
 strum = "0.20.0"
 strum_macros = "0.20.1"

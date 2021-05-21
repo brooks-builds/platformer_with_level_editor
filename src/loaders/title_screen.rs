@@ -20,12 +20,10 @@ impl TitleScreenLoader {
         Ok(())
     }
 
-    fn create_text(&self, name: &str, font_size: f32) -> Text {
-        Text::new(
-            TextFragment::new(name)
-                .color(WHITE)
-                .scale(Scale::uniform(font_size)),
-        )
+    fn create_text(&self, name: &str, font_size: f32) -> TextFragment {
+        TextFragment::new(name)
+            .color(WHITE)
+            .scale(Scale::uniform(font_size))
     }
 
     fn create_title(
@@ -34,16 +32,24 @@ impl TitleScreenLoader {
         screen_coordinates: Rect,
         context: &mut Context,
     ) -> Result<()> {
-        let title_text = self.create_text(
+        let title_text_fragment = self.create_text(
             &get_resource::get_string(&world, ResourceNames::GameName.as_ref()),
             get_resource::get_f32(&world, ResourceNames::TitleFontSize.as_ref()),
         );
+        let title_text = Text::new(title_text_fragment.clone());
         let title_position = Point::new(
             screen_coordinates.w / 2.0 - title_text.width(context) as f32 / 2.0,
             title_text.height(context) as f32 * 2.0,
         );
 
-        self.insert_into_world(world, title_text, title_position)?;
+        self.insert_into_world(
+            world,
+            title_text,
+            title_text_fragment,
+            title_position,
+            false,
+            false,
+        )?;
 
         Ok(())
     }
@@ -54,16 +60,24 @@ impl TitleScreenLoader {
         screen_coordinates: Rect,
         context: &mut Context,
     ) -> Result<()> {
-        let play_text = self.create_text(
-            "Play",
+        let play_text_fragment = self.create_text(
+            "<Play>",
             get_resource::get_f32(&world, ResourceNames::FontSize.as_ref()),
         );
+        let play_text = Text::new(play_text_fragment.clone());
         let play_position = Point::new(
             screen_coordinates.w / 2.0 - play_text.width(context) as f32 / 2.0,
             screen_coordinates.h - screen_coordinates.h * 0.25 - play_text.height(context) as f32,
         );
 
-        self.insert_into_world(world, play_text, play_position)?;
+        self.insert_into_world(
+            world,
+            play_text,
+            play_text_fragment,
+            play_position,
+            true,
+            true,
+        )?;
 
         Ok(())
     }
@@ -74,27 +88,45 @@ impl TitleScreenLoader {
         screen_coordinates: Rect,
         context: &mut Context,
     ) -> Result<()> {
-        let settings_text = self.create_text(
+        let settings_text_fragment = self.create_text(
             "Settings",
             get_resource::get_f32(&world, ResourceNames::FontSize.as_ref()),
         );
-
+        let settings_text = Text::new(settings_text_fragment.clone());
         let settings_position = Point::new(
             screen_coordinates.w / 2.0 - settings_text.width(context) as f32 / 2.0,
             screen_coordinates.h - screen_coordinates.h * 0.25
                 + settings_text.height(context) as f32,
         );
 
-        self.insert_into_world(world, settings_text, settings_position)?;
+        self.insert_into_world(
+            world,
+            settings_text,
+            settings_text_fragment,
+            settings_position,
+            false,
+            true,
+        )?;
 
         Ok(())
     }
 
-    fn insert_into_world(&self, world: &mut World, text: Text, position: Point) -> Result<()> {
+    fn insert_into_world(
+        &self,
+        world: &mut World,
+        text: Text,
+        text_fragment: TextFragment,
+        position: Point,
+        selected: bool,
+        selectable: bool,
+    ) -> Result<()> {
         world
             .spawn_entity()?
             .with_component(ComponentNames::Text.as_ref(), text)?
-            .with_component(ComponentNames::Position.as_ref(), position)?;
+            .with_component(ComponentNames::Position.as_ref(), position)?
+            .with_component(ComponentNames::Selectable.as_ref(), selectable)?
+            .with_component(ComponentNames::Selected.as_ref(), selected)?
+            .with_component(ComponentNames::TextFragment.as_ref(), text_fragment)?;
         Ok(())
     }
 }

@@ -44,6 +44,11 @@ impl MainState {
 
         self.world.register(ComponentNames::Text.to_string())?;
         self.world.register(ComponentNames::Position.to_string())?;
+        self.world.register(ComponentNames::Selected.to_string())?;
+        self.world
+            .register(ComponentNames::Selectable.to_string())?;
+        self.world
+            .register(ComponentNames::TextFragment.to_string())?;
         Ok(())
     }
 }
@@ -72,6 +77,7 @@ impl EventHandler for MainState {
         self.loader_manager
             .update(&mut self.world, context)
             .unwrap();
+        self.system_manager.update(&self.world, context).unwrap();
         Ok(())
     }
 

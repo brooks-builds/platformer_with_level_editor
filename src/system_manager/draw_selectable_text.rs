@@ -9,20 +9,20 @@ use ggez::Context;
 use crate::names::component_names::ComponentNames;
 
 #[derive(Default)]
-pub struct DrawTextSystem;
+pub struct DrawText;
 
-impl DrawTextSystem {
+impl DrawText {
     pub fn run(&self, world: &World, context: &mut Context) -> Result<()> {
         let query;
-        let (texts, positions) = query!(
+        let (text_fragments, positions) = query!(
             world,
             query,
             ComponentNames::Text.as_ref(),
             ComponentNames::Position.as_ref()
         );
 
-        for (index, text) in texts.iter().enumerate() {
-            let text: &DataWrapper<Text> = text.cast()?;
+        for (index, text_fragment) in text_fragments.iter().enumerate() {
+            let text: &DataWrapper<Text> = text_fragment.cast()?;
             let position: &DataWrapper<Point> = positions[index].cast()?;
 
             graphics::draw(
