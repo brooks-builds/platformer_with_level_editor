@@ -31,11 +31,14 @@ impl UpdateTextSystem {
 
             if !*wrapped_selected.borrow() && wrapped_text_fragment.borrow().text.starts_with('<') {
                 self.remove_selected(wrapped_text_fragment);
-                let mut text = wrapped_text.borrow_mut();
-                *text = Text::new(wrapped_text_fragment.borrow().clone());
-                let mut position = wrapped_position.borrow_mut();
-                let screen_coordinates = graphics::screen_coordinates(context);
-                position.x = screen_coordinates.w / 2.0 - text.width(context) as f32 / 2.0;
+                self.update_text(wrapped_text_fragment, wrapped_text);
+                self.update_position(wrapped_position, context, wrapped_text);
+            } else if *wrapped_selected.borrow()
+                && !wrapped_text_fragment.borrow().text.starts_with('<')
+            {
+                self.add_selected(wrapped_text_fragment);
+                self.update_text(wrapped_text_fragment, wrapped_text);
+                self.update_position(wrapped_position, context, wrapped_text);
             }
         }
         Ok(())
@@ -45,5 +48,31 @@ impl UpdateTextSystem {
         let string = &mut wrapped_text_fragment.borrow_mut().text;
         string.remove(0);
         string.pop();
+    }
+
+    fn add_selected(&self, wrapped_text_fragment: &DataWrapper<TextFragment>) {
+        let string = &mut wrapped_text_fragment.borrow_mut().text;
+        string.insert(0, '<');
+        string.push('>');
+    }
+
+    fn update_text(
+        &self,
+        wrapped_text_fragment: &DataWrapper<TextFragment>,
+        wrapped_text: &DataWrapper<Text>,
+    ) {
+        let mut text = wrapped_text.borrow_mut();
+        *text = Text::new(wrapped_text_fragment.borrow().clone());
+    }
+
+    fn update_position(
+        &self,
+        wrapped_position: &DataWrapper<Point>,
+        context: &mut Context,
+        wrapped_text: &DataWrapper<Text>,
+    ) {
+        let mut position = wrapped_position.borrow_mut();
+        let screen_coordinates = graphics::screen_coordinates(context);
+        position.x = screen_coordinates.w / 2.0 - wrapped_text.borrow().width(context) as f32 / 2.0;
     }
 }

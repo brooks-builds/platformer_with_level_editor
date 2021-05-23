@@ -3,17 +3,20 @@ use crossbeam::channel::Sender;
 use events::event::Event;
 use events::EventManager;
 use eyre::Result;
-use ggez::event::EventHandler;
+use ggez::event::{Button, EventHandler, GamepadId};
 use ggez::graphics::BLACK;
 use ggez::{graphics, Context};
+use input_handler::InputHandler;
 use loaders::LoaderManager;
 use names::component_names::ComponentNames;
 use names::resource_names::ResourceNames;
 use states::navigation::Navigation;
 use system_manager::SystemManager;
 
+mod command;
 mod events;
 mod helpers;
+mod input_handler;
 mod loaders;
 mod names;
 mod states;
@@ -25,6 +28,7 @@ pub struct MainState {
     event_sender: Sender<Event>,
     loader_manager: LoaderManager,
     system_manager: SystemManager,
+    input_handler: InputHandler,
 }
 
 impl MainState {
@@ -59,7 +63,8 @@ impl Default for MainState {
         let mut event_manager = EventManager::new();
         let event_sender = event_manager.register();
         let loader_manager = LoaderManager::new(&mut event_manager);
-        let system_manager = SystemManager::new();
+        let system_manager = SystemManager::new(&mut event_manager);
+        let input_handler = InputHandler::new(&mut event_manager);
 
         Self {
             world,
@@ -67,6 +72,7 @@ impl Default for MainState {
             event_sender,
             loader_manager,
             system_manager,
+            input_handler,
         }
     }
 }
@@ -77,6 +83,7 @@ impl EventHandler for MainState {
         self.loader_manager
             .update(&mut self.world, context)
             .unwrap();
+        self.input_handler.update().unwrap();
         self.system_manager.update(&self.world, context).unwrap();
         Ok(())
     }
@@ -86,5 +93,14 @@ impl EventHandler for MainState {
         self.system_manager.display(&self.world, context).unwrap();
 
         graphics::present(context)
+    }
+
+    fn gamepad_button_down_event(
+        &mut self,
+        _context: &mut Context,
+        button: Button,
+        _id: GamepadId,
+    ) {
+        self.input_handler.handle_controller_input(button).unwrap();
     }
 }
