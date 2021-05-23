@@ -34,6 +34,7 @@ impl InputHandler {
             match event {
                 Event::NavigatingTo(new_navigation) => self.current_navigation = new_navigation,
                 Event::Command(_) => {}
+                Event::ChangeMenuItem => {}
             }
         }
         Ok(())

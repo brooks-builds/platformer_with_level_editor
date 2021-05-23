@@ -6,4 +6,5 @@ use strum_macros::{AsRefStr, ToString};
 pub enum Event {
     NavigatingTo(Navigation),
     Command(Command),
+    ChangeMenuItem,
 }

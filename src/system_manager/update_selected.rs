@@ -1,7 +1,7 @@
 use bbecs::components::{CastComponents, ComponentData};
 use bbecs::query;
 use bbecs::world::{DataWrapper, World};
-use crossbeam::channel::Receiver;
+use crossbeam::channel::{Receiver, Sender};
 use eyre::{bail, Result};
 
 use crate::command::Command;
@@ -11,14 +11,19 @@ use crate::names::component_names::ComponentNames;
 
 pub struct UpdateSelectedSystem {
     event_receiver: Receiver<Event>,
+    event_sender: Sender<Event>,
 }
 
 impl UpdateSelectedSystem {
     pub fn new(event_manager: &mut EventManager) -> Self {
         let event_receiver =
             event_manager.subscribe(vec![Event::Command(Command::SelectUp).to_string()]);
+        let event_sender = event_manager.register();
 
-        Self { event_receiver }
+        Self {
+            event_receiver,
+            event_sender,
+        }
     }
 
     pub fn run(&self, world: &World) -> Result<()> {
@@ -46,6 +51,7 @@ impl UpdateSelectedSystem {
 
         if new_index != current_index {
             self.mark_component_as_selected(new_index, selected_components)?;
+            self.event_sender.send(Event::ChangeMenuItem)?;
         }
 
         Ok(())

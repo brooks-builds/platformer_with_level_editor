@@ -1,3 +1,4 @@
+use audio_manager::AudioManager;
 use bbecs::world::{World, WorldMethods};
 use crossbeam::channel::Sender;
 use events::event::Event;
@@ -13,6 +14,7 @@ use names::resource_names::ResourceNames;
 use states::navigation::Navigation;
 use system_manager::SystemManager;
 
+mod audio_manager;
 mod command;
 mod events;
 mod helpers;
@@ -29,11 +31,28 @@ pub struct MainState {
     loader_manager: LoaderManager,
     system_manager: SystemManager,
     input_handler: InputHandler,
+    audio_manager: AudioManager,
 }
 
 impl MainState {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(context: &mut Context) -> Result<Self> {
+        let world = World::new();
+        let mut event_manager = EventManager::new();
+        let event_sender = event_manager.register();
+        let loader_manager = LoaderManager::new(&mut event_manager);
+        let system_manager = SystemManager::new(&mut event_manager);
+        let input_handler = InputHandler::new(&mut event_manager);
+        let audio_manager = AudioManager::new(context, &mut event_manager)?;
+
+        Ok(Self {
+            world,
+            event_manager,
+            event_sender,
+            loader_manager,
+            system_manager,
+            input_handler,
+            audio_manager,
+        })
     }
 
     pub fn setup(&mut self, _context: &mut Context, game_name: &str) -> Result<()> {
@@ -57,26 +76,6 @@ impl MainState {
     }
 }
 
-impl Default for MainState {
-    fn default() -> Self {
-        let world = World::new();
-        let mut event_manager = EventManager::new();
-        let event_sender = event_manager.register();
-        let loader_manager = LoaderManager::new(&mut event_manager);
-        let system_manager = SystemManager::new(&mut event_manager);
-        let input_handler = InputHandler::new(&mut event_manager);
-
-        Self {
-            world,
-            event_manager,
-            event_sender,
-            loader_manager,
-            system_manager,
-            input_handler,
-        }
-    }
-}
-
 impl EventHandler for MainState {
     fn update(&mut self, context: &mut Context) -> ggez::GameResult {
         self.event_manager.process().unwrap();
@@ -85,6 +84,7 @@ impl EventHandler for MainState {
             .unwrap();
         self.input_handler.update().unwrap();
         self.system_manager.update(&self.world, context).unwrap();
+        self.audio_manager.run().unwrap();
         Ok(())
     }
 

@@ -15,7 +15,7 @@ fn main() -> Result<()> {
         .window_mode(window_mode)
         .window_setup(window_setup)
         .build()?;
-    let mut main_state = MainState::new();
+    let mut main_state = MainState::new(&mut context)?;
 
     main_state.setup(&mut context, GAME_NAME)?;
     event::run(&mut context, &mut event_loop, &mut main_state)?;
