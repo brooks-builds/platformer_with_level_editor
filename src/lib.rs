@@ -72,6 +72,8 @@ impl MainState {
             .register(ComponentNames::Selectable.to_string())?;
         self.world
             .register(ComponentNames::TextFragment.to_string())?;
+        self.world
+            .register(ComponentNames::NavigateTo.to_string())?;
         Ok(())
     }
 }
@@ -101,6 +103,8 @@ impl EventHandler for MainState {
         button: Button,
         _id: GamepadId,
     ) {
-        self.input_handler.handle_controller_input(button).unwrap();
+        self.input_handler
+            .handle_controller_input(button, &self.world)
+            .unwrap();
     }
 }

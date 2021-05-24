@@ -7,6 +7,7 @@ use ggez::Context;
 use crate::helpers::get_resource;
 use crate::names::component_names::ComponentNames;
 use crate::names::resource_names::ResourceNames;
+use crate::states::navigation::Navigation;
 
 pub struct TitleScreenLoader;
 
@@ -50,6 +51,7 @@ impl TitleScreenLoader {
             title_position,
             false,
             false,
+            None,
         )?;
 
         Ok(())
@@ -78,6 +80,7 @@ impl TitleScreenLoader {
             play_position,
             true,
             true,
+            Some(Navigation::Play),
         )?;
 
         Ok(())
@@ -107,6 +110,7 @@ impl TitleScreenLoader {
             settings_position,
             false,
             true,
+            Some(Navigation::Settings),
         )?;
 
         Ok(())
@@ -136,6 +140,7 @@ impl TitleScreenLoader {
             credits_position,
             false,
             true,
+            Some(Navigation::Credits),
         )?;
 
         Ok(())
@@ -149,6 +154,7 @@ impl TitleScreenLoader {
         position: Point,
         selected: bool,
         selectable: bool,
+        navigation: Option<Navigation>,
     ) -> Result<()> {
         world
             .spawn_entity()?
@@ -158,6 +164,10 @@ impl TitleScreenLoader {
             .with_component(ComponentNames::TextFragment.as_ref(), text_fragment)?;
         if selectable {
             world.with_component(ComponentNames::Selectable.as_ref(), selectable)?;
+        }
+
+        if let Some(navigation) = navigation {
+            world.with_component(ComponentNames::NavigateTo.as_ref(), navigation.to_string())?;
         }
         Ok(())
     }

@@ -35,7 +35,9 @@ impl LoaderManager {
             if let Event::NavigatingTo(target) = event {
                 match target {
                     Navigation::TitleScreen => self.title_screen.load(world, context)?,
-                    Navigation::_Settings => {}
+                    Navigation::Play => {}
+                    Navigation::Credits => {}
+                    Navigation::Settings => {}
                 }
             }
         }
