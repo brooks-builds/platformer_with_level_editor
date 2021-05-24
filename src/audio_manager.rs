@@ -32,10 +32,7 @@ impl AudioManager {
     pub fn run(&mut self) -> Result<()> {
         while let Ok(event) = self.event_receiver.try_recv() {
             match event {
-                Event::NavigatingTo(_) => {
-                    dbg!("happened?");
-                    self.menu_navigate.play()?
-                }
+                Event::NavigatingTo(_) => self.menu_navigate.play()?,
                 Event::Command(_) => {}
                 Event::ChangeMenuItem => self.menu_select.play()?,
             }

@@ -87,6 +87,7 @@ impl EventHandler for MainState {
         self.input_handler.update().unwrap();
         self.system_manager.update(&self.world, context).unwrap();
         self.audio_manager.run().unwrap();
+        self.world.update().unwrap();
         Ok(())
     }
 
