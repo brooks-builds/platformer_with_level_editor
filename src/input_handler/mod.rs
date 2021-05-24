@@ -25,7 +25,7 @@ impl InputHandler {
             .subscribe(vec![
                 Event::NavigatingTo(Navigation::TitleScreen).to_string()
             ]);
-        let current_navigation = Navigation::Play;
+        let current_navigation = Navigation::SelectLevel;
         let event_sender = event_manager.register();
         let title_screen = TitleScreenInputHandler::new(event_sender.clone());
 
@@ -51,7 +51,7 @@ impl InputHandler {
     pub fn handle_controller_input(&mut self, button: Button, world: &World) -> Result<()> {
         match self.current_navigation {
             Navigation::TitleScreen => self.title_screen.handle_controller_input(world, button)?,
-            Navigation::Play => {}
+            Navigation::SelectLevel => {}
             Navigation::Credits => {}
             Navigation::Settings => {}
         }

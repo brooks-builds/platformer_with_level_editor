@@ -11,13 +11,16 @@ use crate::events::event::Event;
 use crate::events::EventManager;
 use crate::states::navigation::Navigation;
 
+use self::select_level::SelectLevelLoader;
 use self::title_screen::TitleScreenLoader;
 
+mod select_level;
 mod title_screen;
 
 pub struct LoaderManager {
     event_receiver: Receiver<Event>,
     title_screen: TitleScreenLoader,
+    select_level: SelectLevelLoader,
 }
 
 impl LoaderManager {
@@ -27,10 +30,12 @@ impl LoaderManager {
                 Event::NavigatingTo(Navigation::TitleScreen).to_string()
             ]);
         let title_screen = TitleScreenLoader;
+        let select_level = SelectLevelLoader;
 
         Self {
             event_receiver,
             title_screen,
+            select_level,
         }
     }
 
@@ -41,7 +46,7 @@ impl LoaderManager {
 
                 match target {
                     Navigation::TitleScreen => self.title_screen.load(world, context)?,
-                    Navigation::Play => {}
+                    Navigation::SelectLevel => self.select_level.load(world, context)?,
                     Navigation::Credits => {}
                     Navigation::Settings => {}
                 }

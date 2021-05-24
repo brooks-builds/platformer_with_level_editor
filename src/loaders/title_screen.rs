@@ -80,7 +80,7 @@ impl TitleScreenLoader {
             play_position,
             true,
             true,
-            Some(Navigation::Play),
+            Some(Navigation::SelectLevel),
         )?;
 
         Ok(())

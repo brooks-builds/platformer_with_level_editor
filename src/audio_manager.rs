@@ -18,7 +18,7 @@ impl AudioManager {
         let menu_select = Source::new(context, "/menu_select.mp3")?;
         let event_receiver = event_manager.subscribe(vec![
             Event::ChangeMenuItem.to_string(),
-            Event::NavigatingTo(Navigation::Play).to_string(),
+            Event::NavigatingTo(Navigation::SelectLevel).to_string(),
         ]);
         let menu_navigate = Source::new(context, "/menu_navigate.mp3")?;
 
