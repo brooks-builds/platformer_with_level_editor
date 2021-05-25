@@ -1,27 +1,19 @@
 use bbecs::data_types::point::Point;
-use bbecs::world::{World, WorldMethods};
+use bbecs::world::World;
 use eyre::Result;
 use ggez::graphics::{self, Rect, Scale, Text, TextFragment, WHITE};
 use ggez::Context;
 
 use crate::helpers::get_resource;
-use crate::names::component_names::ComponentNames;
 use crate::names::resource_names::ResourceNames;
 use crate::states::navigation::Navigation;
+
+use super::insert_into_world::InsertIntoWorld;
+use super::Loader;
 
 pub struct TitleScreenLoader;
 
 impl TitleScreenLoader {
-    pub fn load(&mut self, world: &mut World, context: &mut Context) -> Result<()> {
-        let screen_coordinates = graphics::screen_coordinates(context);
-        self.create_title(world, screen_coordinates, context)?;
-        self.create_play(world, screen_coordinates, context)?;
-        self.create_settings(world, screen_coordinates, context)?;
-        self.create_credits(world, screen_coordinates, context)?;
-
-        Ok(())
-    }
-
     fn create_text(&self, name: &str, font_size: f32) -> TextFragment {
         TextFragment::new(name)
             .color(WHITE)
@@ -38,21 +30,16 @@ impl TitleScreenLoader {
             &get_resource::get_string(&world, ResourceNames::GameName.as_ref()),
             get_resource::get_f32(&world, ResourceNames::TitleFontSize.as_ref()),
         );
-        let title_text = Text::new(title_text_fragment.clone());
+        let title_text = Text::new(title_text_fragment);
         let title_position = Point::new(
             screen_coordinates.w / 2.0 - title_text.width(context) as f32 / 2.0,
             title_text.height(context) as f32 * 2.0,
         );
 
-        self.insert_into_world(
-            world,
-            title_text,
-            title_text_fragment,
-            title_position,
-            false,
-            false,
-            None,
-        )?;
+        InsertIntoWorld::new()
+            .set_position(title_position)
+            .set_text(title_text)
+            .insert(world)?;
 
         Ok(())
     }
@@ -73,15 +60,14 @@ impl TitleScreenLoader {
             screen_coordinates.h - screen_coordinates.h * 0.25 - play_text.height(context) as f32,
         );
 
-        self.insert_into_world(
-            world,
-            play_text,
-            play_text_fragment,
-            play_position,
-            true,
-            true,
-            Some(Navigation::SelectLevel),
-        )?;
+        InsertIntoWorld::new()
+            .set_navigate_to(Navigation::SelectLevel.to_string())
+            .set_position(play_position)
+            .set_selectable(true)
+            .set_selected(true)
+            .set_text(play_text)
+            .set_text_fragment(play_text_fragment)
+            .insert(world)?;
 
         Ok(())
     }
@@ -103,15 +89,14 @@ impl TitleScreenLoader {
                 + settings_text.height(context) as f32,
         );
 
-        self.insert_into_world(
-            world,
-            settings_text,
-            settings_text_fragment,
-            settings_position,
-            false,
-            true,
-            Some(Navigation::Settings),
-        )?;
+        InsertIntoWorld::new()
+            .set_navigate_to(Navigation::Settings.to_string())
+            .set_position(settings_position)
+            .set_selectable(true)
+            .set_selected(false)
+            .set_text(settings_text)
+            .set_text_fragment(settings_text_fragment)
+            .insert(world)?;
 
         Ok(())
     }
@@ -133,42 +118,27 @@ impl TitleScreenLoader {
                 + credits_text.height(context) as f32 * 3.0,
         );
 
-        self.insert_into_world(
-            world,
-            credits_text,
-            credits_text_fragment,
-            credits_position,
-            false,
-            true,
-            Some(Navigation::Credits),
-        )?;
+        InsertIntoWorld::new()
+            .set_navigate_to(Navigation::Credits.to_string())
+            .set_position(credits_position)
+            .set_selectable(true)
+            .set_selected(false)
+            .set_text(credits_text)
+            .set_text_fragment(credits_text_fragment)
+            .insert(world)?;
 
         Ok(())
     }
+}
 
-    fn insert_into_world(
-        &self,
-        world: &mut World,
-        text: Text,
-        text_fragment: TextFragment,
-        position: Point,
-        selected: bool,
-        selectable: bool,
-        navigation: Option<Navigation>,
-    ) -> Result<()> {
-        world
-            .spawn_entity()?
-            .with_component(ComponentNames::Text.as_ref(), text)?
-            .with_component(ComponentNames::Position.as_ref(), position)?
-            .with_component(ComponentNames::Selected.as_ref(), selected)?
-            .with_component(ComponentNames::TextFragment.as_ref(), text_fragment)?;
-        if selectable {
-            world.with_component(ComponentNames::Selectable.as_ref(), selectable)?;
-        }
+impl Loader for TitleScreenLoader {
+    fn load(&mut self, world: &mut World, context: &mut Context) -> Result<()> {
+        let screen_coordinates = graphics::screen_coordinates(context);
+        self.create_title(world, screen_coordinates, context)?;
+        self.create_play(world, screen_coordinates, context)?;
+        self.create_settings(world, screen_coordinates, context)?;
+        self.create_credits(world, screen_coordinates, context)?;
 
-        if let Some(navigation) = navigation {
-            world.with_component(ComponentNames::NavigateTo.as_ref(), navigation.to_string())?;
-        }
         Ok(())
     }
 }

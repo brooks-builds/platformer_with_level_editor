@@ -1,9 +1,8 @@
 use bbecs::world::World;
-use crossbeam::channel::{Receiver, Sender};
+use crossbeam::channel::Receiver;
 use eyre::Result;
 use ggez::event::Button;
 
-use crate::command::Command;
 use crate::events::event::Event;
 use crate::events::EventManager;
 use crate::states::navigation::Navigation;
@@ -14,7 +13,6 @@ mod title_screen;
 
 pub struct InputHandler {
     event_receiver: Receiver<Event>,
-    event_sender: Sender<Event>,
     current_navigation: Navigation,
     title_screen: TitleScreenInputHandler,
 }
@@ -27,11 +25,10 @@ impl InputHandler {
             ]);
         let current_navigation = Navigation::SelectLevel;
         let event_sender = event_manager.register();
-        let title_screen = TitleScreenInputHandler::new(event_sender.clone());
+        let title_screen = TitleScreenInputHandler::new(event_sender);
 
         Self {
             event_receiver,
-            event_sender,
             current_navigation,
             title_screen,
         }
