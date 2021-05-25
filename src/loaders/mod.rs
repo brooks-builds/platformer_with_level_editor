@@ -12,15 +12,23 @@ use crate::events::EventManager;
 use crate::states::navigation::Navigation;
 
 use self::select_level::SelectLevelLoader;
+use self::settings::SettingsLoader;
 use self::title_screen::TitleScreenLoader;
 
+mod insert_into_world;
 mod select_level;
+mod settings;
 mod title_screen;
+
+trait Loader {
+    fn load(&mut self, world: &mut World, context: &mut Context) -> Result<()>;
+}
 
 pub struct LoaderManager {
     event_receiver: Receiver<Event>,
     title_screen: TitleScreenLoader,
     select_level: SelectLevelLoader,
+    settings: SettingsLoader,
 }
 
 impl LoaderManager {
@@ -31,11 +39,13 @@ impl LoaderManager {
             ]);
         let title_screen = TitleScreenLoader;
         let select_level = SelectLevelLoader;
+        let settings = SettingsLoader;
 
         Self {
             event_receiver,
             title_screen,
             select_level,
+            settings,
         }
     }
 
@@ -48,7 +58,7 @@ impl LoaderManager {
                     Navigation::TitleScreen => self.title_screen.load(world, context)?,
                     Navigation::SelectLevel => self.select_level.load(world, context)?,
                     Navigation::Credits => {}
-                    Navigation::Settings => {}
+                    Navigation::Settings => self.settings.load(world, context)?,
                 }
             }
         }
