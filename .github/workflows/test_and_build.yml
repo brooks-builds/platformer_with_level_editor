@@ -13,7 +13,7 @@ env:
 # What do we want to run in order?
 jobs:
   # name of the job to run. Can be anything.
-  test linux:
+  test_linux:
     # Docker based operating system to load. Windows and Mac are also available
     runs-on: ubuntu-latest
 
@@ -45,7 +45,7 @@ jobs:
         run: cargo test
       - name: Build
         run: cargo build --release
-  test windows:
+  test_windows:
     # Docker based operating system to load. Windows and Mac are also available
     runs-on: windows-latest
 
@@ -69,7 +69,7 @@ jobs:
         run: cargo test
       - name: Build
         run: cargo build --release
-  test mac:
+  test_mac:
     # Docker based operating system to load. Windows and Mac are also available
     runs-on: macos-latest
 
