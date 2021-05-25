@@ -116,6 +116,8 @@ checksum = "a4521f3e3d031370679b3b140beb36dfe4801b09ac77e30c61941f97df3ef28b"
 [[package]]
 name = "bbecs"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59b75964ea6cddec56cea189e19a92691be47c40a8976430d40b4261649c4822"
 dependencies = [
  "eyre",
  "ggez",
