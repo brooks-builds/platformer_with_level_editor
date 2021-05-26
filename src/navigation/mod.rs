@@ -25,16 +25,11 @@ impl Navigation {
     }
 
     pub fn get_current_screen(&self) -> NavigationScreens {
-        *self
-            .history
-            .last()
-            .unwrap_or_else(|| &NavigationScreens::Unknown)
+        *self.history.last().unwrap_or(&NavigationScreens::Unknown)
     }
 
     pub fn pop(&mut self) -> NavigationScreens {
-        self.history
-            .pop()
-            .unwrap_or_else(|| NavigationScreens::Unknown)
+        self.history.pop().unwrap_or(NavigationScreens::Unknown)
     }
 
     pub fn create_navigation_screen_from_string(&self, navigations_str: &str) -> NavigationScreens {

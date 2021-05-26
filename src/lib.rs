@@ -1,7 +1,5 @@
 use audio_manager::AudioManager;
 use bbecs::world::{World, WorldMethods};
-use crossbeam::channel::Sender;
-use events::event::Event;
 use events::EventManager;
 use eyre::Result;
 use ggez::event::{Button, EventHandler, GamepadId};
@@ -27,7 +25,6 @@ mod system_manager;
 pub struct MainState {
     world: World,
     event_manager: EventManager,
-    event_sender: Sender<Event>,
     loader_manager: LoaderManager,
     system_manager: SystemManager,
     input_handler: InputHandler,
@@ -39,7 +36,6 @@ impl MainState {
     pub fn new(context: &mut Context) -> Result<Self> {
         let world = World::new();
         let mut event_manager = EventManager::new();
-        let event_sender = event_manager.register();
         let loader_manager = LoaderManager::new(&mut event_manager);
         let system_manager = SystemManager::new(&mut event_manager);
         let input_handler = InputHandler::new(&mut event_manager);
@@ -49,7 +45,6 @@ impl MainState {
         Ok(Self {
             world,
             event_manager,
-            event_sender,
             loader_manager,
             system_manager,
             input_handler,
