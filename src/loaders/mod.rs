@@ -9,7 +9,7 @@ use ggez::Context;
 
 use crate::events::event::Event;
 use crate::events::EventManager;
-use crate::states::navigation::Navigation;
+use crate::navigation::screens::NavigationScreens;
 
 use self::select_level::SelectLevelLoader;
 use self::settings::SettingsLoader;
@@ -35,7 +35,7 @@ impl LoaderManager {
     pub fn new(event_manager: &mut EventManager) -> Self {
         let event_receiver = event_manager
             .subscribe(vec![
-                Event::NavigatingTo(Navigation::TitleScreen).to_string()
+                Event::NavigatingTo(NavigationScreens::Title).to_string()
             ]);
         let title_screen = TitleScreenLoader;
         let select_level = SelectLevelLoader;
@@ -49,16 +49,22 @@ impl LoaderManager {
         }
     }
 
+    pub fn setup(&mut self, world: &mut World, context: &mut Context) -> Result<()> {
+        self.title_screen.load(world, context)?;
+        Ok(())
+    }
+
     pub fn update(&mut self, world: &mut World, context: &mut Context) -> Result<()> {
         while let Ok(event) = self.event_receiver.try_recv() {
             if let Event::NavigatingTo(target) = event {
                 self.clear_world(world)?;
 
                 match target {
-                    Navigation::TitleScreen => self.title_screen.load(world, context)?,
-                    Navigation::SelectLevel => self.select_level.load(world, context)?,
-                    Navigation::Credits => {}
-                    Navigation::Settings => self.settings.load(world, context)?,
+                    NavigationScreens::Title => self.title_screen.load(world, context)?,
+                    NavigationScreens::LevelSelect => self.select_level.load(world, context)?,
+                    NavigationScreens::Settings => self.settings.load(world, context)?,
+                    NavigationScreens::Credits => {}
+                    NavigationScreens::Unknown => {}
                 }
             }
         }

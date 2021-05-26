@@ -1,10 +1,9 @@
-use crate::command::Command;
-use crate::states::navigation::Navigation;
+use crate::{command::Command, navigation::screens::NavigationScreens};
 use strum_macros::{AsRefStr, ToString};
 
 #[derive(ToString, AsRefStr, Clone, Copy)]
 pub enum Event {
-    NavigatingTo(Navigation),
+    NavigatingTo(NavigationScreens),
     Command(Command),
     ChangeMenuItem,
 }

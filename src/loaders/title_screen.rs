@@ -6,7 +6,7 @@ use ggez::Context;
 
 use crate::helpers::get_resource;
 use crate::names::resource_names::ResourceNames;
-use crate::states::navigation::Navigation;
+use crate::navigation::screens::NavigationScreens;
 
 use super::insert_into_world::InsertIntoWorld;
 use super::Loader;
@@ -61,7 +61,7 @@ impl TitleScreenLoader {
         );
 
         InsertIntoWorld::new()
-            .set_navigate_to(Navigation::SelectLevel.to_string())
+            .set_navigate_to(NavigationScreens::LevelSelect.to_string())
             .set_position(play_position)
             .set_selectable(true)
             .set_selected(true)
@@ -90,7 +90,7 @@ impl TitleScreenLoader {
         );
 
         InsertIntoWorld::new()
-            .set_navigate_to(Navigation::Settings.to_string())
+            .set_navigate_to(NavigationScreens::Settings.to_string())
             .set_position(settings_position)
             .set_selectable(true)
             .set_selected(false)
@@ -119,7 +119,7 @@ impl TitleScreenLoader {
         );
 
         InsertIntoWorld::new()
-            .set_navigate_to(Navigation::Credits.to_string())
+            .set_navigate_to(NavigationScreens::Credits.to_string())
             .set_position(credits_position)
             .set_selectable(true)
             .set_selected(false)

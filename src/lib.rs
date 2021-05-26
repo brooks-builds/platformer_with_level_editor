@@ -11,7 +11,7 @@ use input_handler::InputHandler;
 use loaders::LoaderManager;
 use names::component_names::ComponentNames;
 use names::resource_names::ResourceNames;
-use states::navigation::Navigation;
+use navigation::Navigation;
 use system_manager::SystemManager;
 
 mod audio_manager;
@@ -21,7 +21,7 @@ mod helpers;
 mod input_handler;
 mod loaders;
 mod names;
-mod states;
+mod navigation;
 mod system_manager;
 
 pub struct MainState {
@@ -32,6 +32,7 @@ pub struct MainState {
     system_manager: SystemManager,
     input_handler: InputHandler,
     audio_manager: AudioManager,
+    navigation: Navigation,
 }
 
 impl MainState {
@@ -43,6 +44,7 @@ impl MainState {
         let system_manager = SystemManager::new(&mut event_manager);
         let input_handler = InputHandler::new(&mut event_manager);
         let audio_manager = AudioManager::new(context, &mut event_manager)?;
+        let navigation = Navigation::new(&mut event_manager);
 
         Ok(Self {
             world,
@@ -52,18 +54,17 @@ impl MainState {
             system_manager,
             input_handler,
             audio_manager,
+            navigation,
         })
     }
 
-    pub fn setup(&mut self, _context: &mut Context, game_name: &str) -> Result<()> {
+    pub fn setup(&mut self, context: &mut Context, game_name: &str) -> Result<()> {
         self.world
             .add_resource(ResourceNames::GameName.to_string(), game_name.to_owned());
         self.world
             .add_resource(ResourceNames::TitleFontSize.to_string(), 72.0_f32);
         self.world
             .add_resource(ResourceNames::FontSize.to_string(), 24.0_f32);
-        self.event_sender
-            .send(Event::NavigatingTo(Navigation::TitleScreen))?;
 
         self.world.register(ComponentNames::Text.to_string())?;
         self.world.register(ComponentNames::Position.to_string())?;
@@ -74,6 +75,8 @@ impl MainState {
             .register(ComponentNames::TextFragment.to_string())?;
         self.world
             .register(ComponentNames::NavigateTo.to_string())?;
+
+        self.loader_manager.setup(&mut self.world, context)?;
         Ok(())
     }
 }
@@ -87,6 +90,7 @@ impl EventHandler for MainState {
         self.input_handler.update().unwrap();
         self.system_manager.update(&self.world, context).unwrap();
         self.audio_manager.run().unwrap();
+        self.navigation.update().unwrap();
         self.world.update().unwrap();
         Ok(())
     }
@@ -105,7 +109,7 @@ impl EventHandler for MainState {
         _id: GamepadId,
     ) {
         self.input_handler
-            .handle_controller_input(button, &self.world)
+            .handle_controller_input(button, &self.world, &mut self.navigation)
             .unwrap();
     }
 }

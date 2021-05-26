@@ -8,7 +8,7 @@ use ggez::event::Button;
 use crate::command::Command;
 use crate::events::event::Event;
 use crate::names::component_names::ComponentNames;
-use crate::states::navigation::Navigation;
+use crate::navigation::Navigation;
 
 pub struct TitleScreenInputHandler {
     event_sender: Sender<Event>,
@@ -19,20 +19,25 @@ impl TitleScreenInputHandler {
         Self { event_sender }
     }
 
-    pub fn handle_controller_input(&mut self, world: &World, button: Button) -> Result<()> {
+    pub fn handle_controller_input(
+        &mut self,
+        world: &World,
+        button: Button,
+        navigation: &Navigation,
+    ) -> Result<()> {
         match button {
-            Button::Start => self.handle_select(world)?,
+            Button::Start => self.handle_select(world, navigation)?,
             Button::DPadUp => self.event_sender.send(Event::Command(Command::SelectUp))?,
             Button::DPadDown => self
                 .event_sender
                 .send(Event::Command(Command::SelectDown))?,
-            Button::South => self.handle_select(world)?,
+            Button::South => self.handle_select(world, navigation)?,
             _ => {}
         }
         Ok(())
     }
 
-    fn handle_select(&mut self, world: &World) -> Result<()> {
+    fn handle_select(&mut self, world: &World, navigation: &Navigation) -> Result<()> {
         let query;
         let (selected_components, navigate_to_components) = query!(
             world,
@@ -48,7 +53,8 @@ impl TitleScreenInputHandler {
             }
             let wrapped_navigate_string: &DataWrapper<String> =
                 navigate_to_components[index].cast()?;
-            let navigate_to = Navigation::from(wrapped_navigate_string.borrow().clone());
+            let navigate_to =
+                navigation.create_navigation_screen_from_string(&*wrapped_navigate_string.borrow());
             self.event_sender.send(Event::NavigatingTo(navigate_to))?;
         }
         Ok(())
