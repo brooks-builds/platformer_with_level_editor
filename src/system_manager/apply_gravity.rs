@@ -17,11 +17,11 @@ impl ApplyGravitySystem {
     pub fn run(&self, world: &World) -> Result<()> {
         let gravity = get_f32(world, ResourceNames::Gravity.as_ref());
         let query;
-        let (positions,) = query!(world, query, ComponentNames::Position.as_ref());
+        let (accelerations,) = query!(world, query, ComponentNames::Acceleration.as_ref());
 
-        for position in positions {
-            let wrapped_position: &DataWrapper<Point> = position.cast()?;
-            wrapped_position.borrow_mut().y += gravity;
+        for acceleration in accelerations {
+            let wrapped_acceleration: &DataWrapper<Point> = acceleration.cast()?;
+            wrapped_acceleration.borrow_mut().y += gravity;
         }
         Ok(())
     }
