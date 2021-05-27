@@ -15,6 +15,8 @@ pub struct InsertIntoWorld {
     selected: Option<bool>,
     text: Option<Text>,
     text_fragment: Option<TextFragment>,
+    velocity: Option<Point>,
+    acceleration: Option<Point>,
 }
 
 impl InsertIntoWorld {
@@ -52,6 +54,16 @@ impl InsertIntoWorld {
         self
     }
 
+    pub fn set_velocity(mut self, velocity: Point) -> Self {
+        self.velocity = Some(velocity);
+        self
+    }
+
+    pub fn set_acceleration(mut self, acceleration: Point) -> Self {
+        self.acceleration = Some(acceleration);
+        self
+    }
+
     pub fn insert(self, world: &mut World) -> Result<()> {
         world.spawn_entity()?;
 
@@ -77,6 +89,14 @@ impl InsertIntoWorld {
 
         if let Some(text_fragment) = self.text_fragment {
             world.with_component(ComponentNames::TextFragment.as_ref(), text_fragment)?;
+        }
+
+        if let Some(velocity) = self.velocity {
+            world.with_component(ComponentNames::Velocity.as_ref(), velocity)?;
+        }
+
+        if let Some(acceleration) = self.acceleration {
+            world.with_component(ComponentNames::Acceleration.as_ref(), acceleration)?;
         }
 
         Ok(())

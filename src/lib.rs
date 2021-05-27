@@ -70,6 +70,8 @@ impl MainState {
             ResourceNames::UnitSize.to_string(),
             Point::new(150.0, 150.0),
         );
+        self.world
+            .add_resource(ResourceNames::Gravity.to_string(), 0.001_f32);
 
         self.world.register(ComponentNames::Text.to_string())?;
         self.world.register(ComponentNames::Position.to_string())?;
@@ -80,6 +82,9 @@ impl MainState {
             .register(ComponentNames::TextFragment.to_string())?;
         self.world
             .register(ComponentNames::NavigateTo.to_string())?;
+        self.world.register(ComponentNames::Velocity.to_string())?;
+        self.world
+            .register(ComponentNames::Acceleration.to_string())?;
 
         self.loader_manager
             .setup(&mut self.world, context, &self.level_manager)?;

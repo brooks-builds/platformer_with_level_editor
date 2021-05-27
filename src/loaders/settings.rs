@@ -40,7 +40,7 @@ impl Loader for SettingsLoader {
         &mut self,
         world: &mut bbecs::world::World,
         context: &mut ggez::Context,
-        level_manager: &LevelManager,
+        _level_manager: &LevelManager,
     ) -> eyre::Result<()> {
         self.create_title(world, context)?;
         Ok(())

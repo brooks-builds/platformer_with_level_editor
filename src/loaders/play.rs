@@ -1,3 +1,5 @@
+use bbecs::data_types::point::Point;
+
 use crate::level_manager::LevelManager;
 
 use super::{insert_into_world::InsertIntoWorld, Loader};
@@ -8,7 +10,7 @@ impl Loader for PlayLoader {
     fn load(
         &mut self,
         world: &mut bbecs::world::World,
-        context: &mut ggez::Context,
+        _context: &mut ggez::Context,
         level_manager: &LevelManager,
     ) -> eyre::Result<()> {
         dbg!("inserting play into world");
@@ -16,6 +18,8 @@ impl Loader for PlayLoader {
 
         InsertIntoWorld::new()
             .set_position(level.start)
+            .set_velocity(Point::new(0.0, 0.0))
+            .set_acceleration(Point::new(0.0, 0.0))
             .insert(world)?;
         Ok(())
     }

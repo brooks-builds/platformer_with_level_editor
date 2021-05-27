@@ -22,7 +22,7 @@ impl DrawEntities {
         let query;
         let (positions,) = query!(world, query, ComponentNames::Position.as_ref());
         let mut mesh_builder = MeshBuilder::new();
-        for (index, position) in positions.iter().enumerate() {
+        for (_index, position) in positions.iter().enumerate() {
             let wrapped_position: &DataWrapper<Point> = position.cast()?;
             let screen_position =
                 self.convert_world_position_to_pixels(wrapped_position.borrow(), world);

@@ -8,4 +8,6 @@ pub enum ComponentNames {
     Selected,
     Text,
     TextFragment,
+    Velocity,
+    Acceleration,
 }

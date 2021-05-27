@@ -137,7 +137,7 @@ impl Loader for TitleScreenLoader {
         &mut self,
         world: &mut World,
         context: &mut Context,
-        level_manager: &LevelManager,
+        _level_manager: &LevelManager,
     ) -> Result<()> {
         let screen_coordinates = graphics::screen_coordinates(context);
         self.create_title(world, screen_coordinates, context)?;

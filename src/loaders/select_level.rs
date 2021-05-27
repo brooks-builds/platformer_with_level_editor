@@ -45,7 +45,7 @@ impl Loader for SelectLevelLoader {
         &mut self,
         world: &mut World,
         context: &mut Context,
-        level_manager: &LevelManager,
+        _level_manager: &LevelManager,
     ) -> Result<()> {
         self.create_title(world, context)?;
         Ok(())
