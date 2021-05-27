@@ -9,6 +9,7 @@ use ggez::Context;
 
 use crate::events::event::Event;
 use crate::events::EventManager;
+use crate::level_manager::LevelManager;
 use crate::navigation::screens::NavigationScreens;
 
 use self::play::PlayLoader;
@@ -23,7 +24,12 @@ mod settings;
 mod title_screen;
 
 trait Loader {
-    fn load(&mut self, world: &mut World, context: &mut Context) -> Result<()>;
+    fn load(
+        &mut self,
+        world: &mut World,
+        context: &mut Context,
+        level_manager: &LevelManager,
+    ) -> Result<()>;
 }
 
 pub struct LoaderManager {
@@ -54,23 +60,39 @@ impl LoaderManager {
         }
     }
 
-    pub fn setup(&mut self, world: &mut World, context: &mut Context) -> Result<()> {
-        self.title_screen.load(world, context)?;
+    pub fn setup(
+        &mut self,
+        world: &mut World,
+        context: &mut Context,
+        level_manager: &LevelManager,
+    ) -> Result<()> {
+        self.title_screen.load(world, context, level_manager)?;
         Ok(())
     }
 
-    pub fn update(&mut self, world: &mut World, context: &mut Context) -> Result<()> {
+    pub fn update(
+        &mut self,
+        world: &mut World,
+        context: &mut Context,
+        level_manager: &LevelManager,
+    ) -> Result<()> {
         while let Ok(event) = self.event_receiver.try_recv() {
             if let Event::NavigatingTo(target) = event {
                 self.clear_world(world)?;
 
                 match target {
-                    NavigationScreens::Title => self.title_screen.load(world, context)?,
-                    NavigationScreens::LevelSelect => self.select_level.load(world, context)?,
-                    NavigationScreens::Settings => self.settings.load(world, context)?,
+                    NavigationScreens::Title => {
+                        self.title_screen.load(world, context, level_manager)?
+                    }
+                    NavigationScreens::LevelSelect => {
+                        self.select_level.load(world, context, level_manager)?
+                    }
+                    NavigationScreens::Settings => {
+                        self.settings.load(world, context, level_manager)?
+                    }
                     NavigationScreens::Credits => {}
                     NavigationScreens::Unknown => {}
-                    NavigationScreens::Play => self.play.load(world, context)?,
+                    NavigationScreens::Play => self.play.load(world, context, level_manager)?,
                 }
             }
         }

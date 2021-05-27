@@ -6,6 +6,8 @@ use eyre::Result;
 use ggez::graphics::{Font, Scale, Text, TextFragment, WHITE};
 use ggez::Context;
 
+use crate::level_manager::LevelManager;
+
 use super::insert_into_world::InsertIntoWorld;
 use super::Loader;
 
@@ -39,7 +41,12 @@ impl SelectLevelLoader {
 }
 
 impl Loader for SelectLevelLoader {
-    fn load(&mut self, world: &mut World, context: &mut Context) -> Result<()> {
+    fn load(
+        &mut self,
+        world: &mut World,
+        context: &mut Context,
+        level_manager: &LevelManager,
+    ) -> Result<()> {
         self.create_title(world, context)?;
         Ok(())
     }

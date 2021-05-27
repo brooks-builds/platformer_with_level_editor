@@ -1,4 +1,5 @@
 use audio_manager::AudioManager;
+use bbecs::data_types::point::Point;
 use bbecs::world::{World, WorldMethods};
 use events::EventManager;
 use eyre::Result;
@@ -65,6 +66,10 @@ impl MainState {
             .add_resource(ResourceNames::TitleFontSize.to_string(), 72.0_f32);
         self.world
             .add_resource(ResourceNames::FontSize.to_string(), 24.0_f32);
+        self.world.add_resource(
+            ResourceNames::UnitSize.to_string(),
+            Point::new(150.0, 150.0),
+        );
 
         self.world.register(ComponentNames::Text.to_string())?;
         self.world.register(ComponentNames::Position.to_string())?;
@@ -76,7 +81,8 @@ impl MainState {
         self.world
             .register(ComponentNames::NavigateTo.to_string())?;
 
-        self.loader_manager.setup(&mut self.world, context)?;
+        self.loader_manager
+            .setup(&mut self.world, context, &self.level_manager)?;
         Ok(())
     }
 }
@@ -85,7 +91,7 @@ impl EventHandler for MainState {
     fn update(&mut self, context: &mut Context) -> ggez::GameResult {
         self.event_manager.process().unwrap();
         self.loader_manager
-            .update(&mut self.world, context)
+            .update(&mut self.world, context, &self.level_manager)
             .unwrap();
         self.input_handler.update().unwrap();
         self.system_manager.update(&self.world, context).unwrap();

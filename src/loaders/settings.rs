@@ -5,7 +5,10 @@ use ggez::{
     Context,
 };
 
-use crate::{helpers::get_resource::get_f32, names::resource_names::ResourceNames};
+use crate::{
+    helpers::get_resource::get_f32, level_manager::LevelManager,
+    names::resource_names::ResourceNames,
+};
 
 use super::{insert_into_world::InsertIntoWorld, Loader};
 
@@ -37,6 +40,7 @@ impl Loader for SettingsLoader {
         &mut self,
         world: &mut bbecs::world::World,
         context: &mut ggez::Context,
+        level_manager: &LevelManager,
     ) -> eyre::Result<()> {
         self.create_title(world, context)?;
         Ok(())

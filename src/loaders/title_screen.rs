@@ -5,6 +5,7 @@ use ggez::graphics::{self, Rect, Scale, Text, TextFragment, WHITE};
 use ggez::Context;
 
 use crate::helpers::get_resource;
+use crate::level_manager::LevelManager;
 use crate::names::resource_names::ResourceNames;
 use crate::navigation::screens::NavigationScreens;
 
@@ -132,7 +133,12 @@ impl TitleScreenLoader {
 }
 
 impl Loader for TitleScreenLoader {
-    fn load(&mut self, world: &mut World, context: &mut Context) -> Result<()> {
+    fn load(
+        &mut self,
+        world: &mut World,
+        context: &mut Context,
+        level_manager: &LevelManager,
+    ) -> Result<()> {
         let screen_coordinates = graphics::screen_coordinates(context);
         self.create_title(world, screen_coordinates, context)?;
         self.create_play(world, screen_coordinates, context)?;

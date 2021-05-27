@@ -38,6 +38,7 @@ impl Navigation {
             "LevelSelect" => NavigationScreens::LevelSelect,
             "Settings" => NavigationScreens::Settings,
             "Credits" => NavigationScreens::Credits,
+            "Play" => NavigationScreens::Play,
             _ => NavigationScreens::Unknown,
         }
     }
