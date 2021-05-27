@@ -6,6 +6,7 @@ use ggez::event::{Button, EventHandler, GamepadId};
 use ggez::graphics::BLACK;
 use ggez::{graphics, Context};
 use input_handler::InputHandler;
+use level_manager::LevelManager;
 use loaders::LoaderManager;
 use names::component_names::ComponentNames;
 use names::resource_names::ResourceNames;
@@ -17,6 +18,7 @@ mod command;
 mod events;
 mod helpers;
 mod input_handler;
+mod level_manager;
 mod loaders;
 mod names;
 mod navigation;
@@ -30,6 +32,7 @@ pub struct MainState {
     input_handler: InputHandler,
     audio_manager: AudioManager,
     navigation: Navigation,
+    level_manager: LevelManager,
 }
 
 impl MainState {
@@ -41,6 +44,7 @@ impl MainState {
         let input_handler = InputHandler::new(&mut event_manager);
         let audio_manager = AudioManager::new(context, &mut event_manager)?;
         let navigation = Navigation::new(&mut event_manager);
+        let level_manager = LevelManager::new();
 
         Ok(Self {
             world,
@@ -50,6 +54,7 @@ impl MainState {
             input_handler,
             audio_manager,
             navigation,
+            level_manager,
         })
     }
 

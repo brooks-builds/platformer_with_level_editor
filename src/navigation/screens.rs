@@ -7,4 +7,5 @@ pub enum NavigationScreens {
     Settings,
     Credits,
     Unknown,
+    Play,
 }

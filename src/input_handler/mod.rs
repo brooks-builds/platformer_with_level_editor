@@ -67,6 +67,7 @@ impl InputHandler {
                 .handle_controller_input(world, button, navigation)?,
             NavigationScreens::Credits => {}
             NavigationScreens::Unknown => {}
+            NavigationScreens::Play => {}
         }
         Ok(())
     }
