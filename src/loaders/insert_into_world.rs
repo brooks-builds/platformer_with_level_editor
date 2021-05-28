@@ -17,6 +17,10 @@ pub struct InsertIntoWorld {
     text_fragment: Option<TextFragment>,
     velocity: Option<Point>,
     acceleration: Option<Point>,
+    affected_by_gravity: Option<bool>,
+    camera: Option<bool>,
+    width: Option<f32>,
+    height: Option<f32>,
 }
 
 impl InsertIntoWorld {
@@ -64,6 +68,26 @@ impl InsertIntoWorld {
         self
     }
 
+    pub fn set_affected_by_gravity(mut self, affected_by_gravity: bool) -> Self {
+        self.affected_by_gravity = Some(affected_by_gravity);
+        self
+    }
+
+    pub fn set_camera(mut self, camera: bool) -> Self {
+        self.camera = Some(camera);
+        self
+    }
+
+    pub fn set_width(mut self, width: f32) -> Self {
+        self.width = Some(width);
+        self
+    }
+
+    pub fn set_height(mut self, height: f32) -> Self {
+        self.height = Some(height);
+        self
+    }
+
     pub fn insert(self, world: &mut World) -> Result<()> {
         world.spawn_entity()?;
 
@@ -97,6 +121,25 @@ impl InsertIntoWorld {
 
         if let Some(acceleration) = self.acceleration {
             world.with_component(ComponentNames::Acceleration.as_ref(), acceleration)?;
+        }
+
+        if let Some(affected_by_gravity) = self.affected_by_gravity {
+            world.with_component(
+                ComponentNames::AffectedByGravity.as_ref(),
+                affected_by_gravity,
+            )?;
+        }
+
+        if let Some(camera) = self.camera {
+            world.with_component(ComponentNames::Camera.as_ref(), camera)?;
+        }
+
+        if let Some(width) = self.width {
+            world.with_component(ComponentNames::Width.as_ref(), width)?;
+        }
+
+        if let Some(height) = self.height {
+            world.with_component(ComponentNames::Height.as_ref(), height)?;
         }
 
         Ok(())

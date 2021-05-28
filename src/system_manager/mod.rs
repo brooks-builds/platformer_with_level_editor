@@ -5,14 +5,16 @@ use ggez::Context;
 use crate::events::EventManager;
 
 use self::apply_gravity::ApplyGravitySystem;
-use self::draw_entities::DrawEntities;
+use self::camera::CameraSystem;
 use self::draw_selectable_text::DrawText;
+use self::update_forces::UpdateForcesSystem;
 use self::update_selected::UpdateSelectedSystem;
 use self::update_text::UpdateTextSystem;
 
 mod apply_gravity;
-mod draw_entities;
+mod camera;
 mod draw_selectable_text;
+mod update_forces;
 mod update_selected;
 mod update_text;
 
@@ -20,8 +22,9 @@ pub struct SystemManager {
     draw_text: DrawText,
     update_text: UpdateTextSystem,
     update_selected: UpdateSelectedSystem,
-    draw_entities: DrawEntities,
+    draw_entities: CameraSystem,
     apply_gravity: ApplyGravitySystem,
+    update_forces: UpdateForcesSystem,
 }
 
 impl SystemManager {
@@ -29,8 +32,9 @@ impl SystemManager {
         let draw_text = DrawText::default();
         let update_text = UpdateTextSystem::default();
         let update_selected = UpdateSelectedSystem::new(event_manager);
-        let draw_entities = DrawEntities;
+        let draw_entities = CameraSystem;
         let apply_gravity = ApplyGravitySystem;
+        let update_forces = UpdateForcesSystem;
 
         Self {
             draw_text,
@@ -38,6 +42,7 @@ impl SystemManager {
             update_selected,
             draw_entities,
             apply_gravity,
+            update_forces,
         }
     }
 
@@ -45,6 +50,7 @@ impl SystemManager {
         self.update_text.run(world, context)?;
         self.update_selected.run(world)?;
         self.apply_gravity.run(world)?;
+        self.update_forces.run(world)?;
         Ok(())
     }
 

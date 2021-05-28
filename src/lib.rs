@@ -5,7 +5,7 @@ use events::EventManager;
 use eyre::Result;
 use ggez::event::{Button, EventHandler, GamepadId};
 use ggez::graphics::BLACK;
-use ggez::{graphics, Context};
+use ggez::{graphics, timer, Context};
 use input_handler::InputHandler;
 use level_manager::LevelManager;
 use loaders::LoaderManager;
@@ -85,6 +85,11 @@ impl MainState {
         self.world.register(ComponentNames::Velocity.to_string())?;
         self.world
             .register(ComponentNames::Acceleration.to_string())?;
+        self.world
+            .register(ComponentNames::AffectedByGravity.to_string())?;
+        self.world.register(ComponentNames::Camera.to_string())?;
+        self.world.register(ComponentNames::Width.to_string())?;
+        self.world.register(ComponentNames::Height.to_string())?;
 
         self.loader_manager
             .setup(&mut self.world, context, &self.level_manager)?;
@@ -94,15 +99,18 @@ impl MainState {
 
 impl EventHandler for MainState {
     fn update(&mut self, context: &mut Context) -> ggez::GameResult {
-        self.event_manager.process().unwrap();
-        self.loader_manager
-            .update(&mut self.world, context, &self.level_manager)
-            .unwrap();
-        self.input_handler.update().unwrap();
-        self.system_manager.update(&self.world, context).unwrap();
-        self.audio_manager.run().unwrap();
-        self.navigation.update().unwrap();
-        self.world.update().unwrap();
+        while timer::check_update_time(context, 60) {
+            self.event_manager.process().unwrap();
+            self.loader_manager
+                .update(&mut self.world, context, &self.level_manager)
+                .unwrap();
+            self.input_handler.update().unwrap();
+            self.system_manager.update(&self.world, context).unwrap();
+            self.audio_manager.run().unwrap();
+            self.navigation.update().unwrap();
+            self.world.update().unwrap();
+        }
+
         Ok(())
     }
 

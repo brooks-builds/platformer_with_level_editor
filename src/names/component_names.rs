@@ -10,4 +10,8 @@ pub enum ComponentNames {
     TextFragment,
     Velocity,
     Acceleration,
+    AffectedByGravity,
+    Camera,
+    Width,
+    Height,
 }
