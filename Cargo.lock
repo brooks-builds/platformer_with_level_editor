@@ -1523,6 +1523,7 @@ dependencies = [
  "crossbeam",
  "eyre",
  "ggez",
+ "rand 0.8.3",
  "strum",
  "strum_macros",
 ]

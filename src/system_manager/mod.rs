@@ -3,6 +3,7 @@ use eyre::Result;
 use ggez::Context;
 
 use crate::events::EventManager;
+use crate::image_manager::ImageManager;
 
 use self::apply_gravity::ApplyGravitySystem;
 use self::camera::CameraSystem;
@@ -54,9 +55,15 @@ impl SystemManager {
         Ok(())
     }
 
-    pub fn display(&self, world: &World, context: &mut Context) -> Result<()> {
+    pub fn display(
+        &self,
+        world: &World,
+        context: &mut Context,
+        image_manager: &ImageManager,
+    ) -> Result<()> {
         self.draw_text.run(world, context)?;
-        self.draw_entities.run(world, context)?;
+        self.draw_entities.run(world, context, image_manager)?;
+
         Ok(())
     }
 }

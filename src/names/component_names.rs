@@ -14,4 +14,6 @@ pub enum ComponentNames {
     Camera,
     Width,
     Height,
+    Platform,
+    ImageName,
 }

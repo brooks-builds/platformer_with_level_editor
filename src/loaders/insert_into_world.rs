@@ -21,6 +21,8 @@ pub struct InsertIntoWorld {
     camera: Option<bool>,
     width: Option<f32>,
     height: Option<f32>,
+    platform: Option<bool>,
+    image_name: Option<String>,
 }
 
 impl InsertIntoWorld {
@@ -88,6 +90,16 @@ impl InsertIntoWorld {
         self
     }
 
+    pub fn set_platform(mut self) -> Self {
+        self.platform = Some(true);
+        self
+    }
+
+    pub fn set_image_name(mut self, image_name: String) -> Self {
+        self.image_name = Some(image_name);
+        self
+    }
+
     pub fn insert(self, world: &mut World) -> Result<()> {
         world.spawn_entity()?;
 
@@ -140,6 +152,14 @@ impl InsertIntoWorld {
 
         if let Some(height) = self.height {
             world.with_component(ComponentNames::Height.as_ref(), height)?;
+        }
+
+        if let Some(platform) = self.platform {
+            world.with_component(ComponentNames::Platform.as_ref(), platform)?;
+        }
+
+        if let Some(image_name) = self.image_name {
+            world.with_component(ComponentNames::ImageName.as_ref(), image_name)?;
         }
 
         Ok(())

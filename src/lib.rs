@@ -6,6 +6,7 @@ use eyre::Result;
 use ggez::event::{Button, EventHandler, GamepadId};
 use ggez::graphics::BLACK;
 use ggez::{graphics, timer, Context};
+use image_manager::ImageManager;
 use input_handler::InputHandler;
 use level_manager::LevelManager;
 use loaders::LoaderManager;
@@ -18,6 +19,7 @@ mod audio_manager;
 mod command;
 mod events;
 mod helpers;
+mod image_manager;
 mod input_handler;
 mod level_manager;
 mod loaders;
@@ -34,6 +36,7 @@ pub struct MainState {
     audio_manager: AudioManager,
     navigation: Navigation,
     level_manager: LevelManager,
+    image_manager: ImageManager,
 }
 
 impl MainState {
@@ -46,6 +49,7 @@ impl MainState {
         let audio_manager = AudioManager::new(context, &mut event_manager)?;
         let navigation = Navigation::new(&mut event_manager);
         let level_manager = LevelManager::new();
+        let image_manager = ImageManager::new(context)?;
 
         Ok(Self {
             world,
@@ -56,6 +60,7 @@ impl MainState {
             audio_manager,
             navigation,
             level_manager,
+            image_manager,
         })
     }
 
@@ -90,6 +95,8 @@ impl MainState {
         self.world.register(ComponentNames::Camera.to_string())?;
         self.world.register(ComponentNames::Width.to_string())?;
         self.world.register(ComponentNames::Height.to_string())?;
+        self.world.register(ComponentNames::Platform.to_string())?;
+        self.world.register(ComponentNames::ImageName.to_string())?;
 
         self.loader_manager
             .setup(&mut self.world, context, &self.level_manager)?;
@@ -116,7 +123,9 @@ impl EventHandler for MainState {
 
     fn draw(&mut self, context: &mut Context) -> ggez::GameResult {
         graphics::clear(context, BLACK);
-        self.system_manager.display(&self.world, context).unwrap();
+        self.system_manager
+            .display(&self.world, context, &self.image_manager)
+            .unwrap();
 
         graphics::present(context)
     }

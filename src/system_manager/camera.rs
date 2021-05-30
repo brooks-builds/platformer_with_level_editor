@@ -1,27 +1,31 @@
 use std::cell::Ref;
 
-use bbecs::resources::resource::ResourceCast;
 use bbecs::{
     components::CastComponents,
     data_types::point::Point,
-    get_resource, query,
+    query,
     world::{DataWrapper, World},
 };
 use eyre::Result;
-use ggez::graphics::pipe::Data;
 use ggez::{
-    graphics::{self, Color, DrawMode, DrawParam, MeshBuilder},
+    graphics::{self, DrawParam},
     Context,
 };
 
-use crate::names::{component_names::ComponentNames, resource_names::ResourceNames};
+use crate::image_manager::ImageManager;
+use crate::names::component_names::ComponentNames;
 
 pub struct CameraSystem;
 
 impl CameraSystem {
-    pub fn run(&self, world: &World, context: &mut Context) -> Result<()> {
-        let mut query;
-        let (cameras, camera_positions, camera_widths, camera_heights) = query!(
+    pub fn run(
+        &self,
+        world: &World,
+        context: &mut Context,
+        image_manager: &ImageManager,
+    ) -> Result<()> {
+        let query;
+        let (_cameras, camera_positions, camera_widths, camera_heights) = query!(
             world,
             query,
             ComponentNames::Camera.as_ref(),
@@ -32,11 +36,10 @@ impl CameraSystem {
         if camera_positions.is_empty() {
             return Ok(());
         }
+
         let wrapped_camera_position: &DataWrapper<Point> = camera_positions[0].cast()?;
         let wrapped_camera_width: &DataWrapper<f32> = camera_widths[0].cast()?;
         let wrapped_camera_height: &DataWrapper<f32> = camera_heights[0].cast()?;
-        let (positions,) = query!(world, query, ComponentNames::Position.as_ref());
-        let mut mesh_builder = MeshBuilder::new();
 
         graphics::push_transform(
             context,
@@ -50,25 +53,51 @@ impl CameraSystem {
                     .to_matrix(),
             ),
         );
-        for (_index, position) in positions.iter().enumerate() {
-            let wrapped_position: &DataWrapper<Point> = position.cast()?;
-
-            mesh_builder.circle(
-                DrawMode::fill(),
-                wrapped_position.borrow().to_array(),
-                10.0,
-                0.1,
-                Color::new(0.0, 1.0, 0.0, 1.0),
-            );
-        }
-
-        graphics::apply_transformations(context)?;
-
-        if let Ok(mesh) = mesh_builder.build(context) {
-            graphics::draw(context, &mesh, DrawParam::new())?;
-        }
+        self.draw_entities(world, context, image_manager)?;
         graphics::pop_transform(context);
 
         Ok(())
+    }
+
+    pub fn draw_entities(
+        &self,
+        world: &World,
+        context: &mut Context,
+        image_manager: &ImageManager,
+    ) -> Result<()> {
+        let query;
+        let (positions, widths, heights, image_names) = query!(
+            world,
+            query,
+            ComponentNames::Position.as_ref(),
+            ComponentNames::Width.as_ref(),
+            ComponentNames::Height.as_ref(),
+            ComponentNames::ImageName.as_ref()
+        );
+        for (index, position) in positions.iter().enumerate() {
+            let wrapped_position: &DataWrapper<Point> = position.cast()?;
+            let width: &DataWrapper<f32> = widths[index].cast()?;
+            let height: &DataWrapper<f32> = heights[index].cast()?;
+            let image_name: &DataWrapper<String> = image_names[index].cast()?;
+
+            let destination = self.calculate_destination(
+                wrapped_position.borrow(),
+                *width.borrow(),
+                *height.borrow(),
+            );
+
+            if let Some(image) = image_manager.get_image_from_str(&*image_name.borrow()) {
+                graphics::draw(
+                    context,
+                    image,
+                    DrawParam::new().dest(destination.to_array()),
+                )?;
+            }
+        }
+        Ok(())
+    }
+
+    fn calculate_destination(&self, position: Ref<Point>, width: f32, height: f32) -> Point {
+        Point::new(position.x - width / 2.0, position.y - height / 2.0)
     }
 }
