@@ -1,11 +1,10 @@
 use bbecs::{
-    components::{self, CastComponents},
+    components::CastComponents,
     data_types::point::Point,
     query,
     world::{DataWrapper, World},
 };
 use eyre::Result;
-use ggez::input::mouse::position;
 
 use crate::names::component_names::ComponentNames;
 
@@ -30,12 +29,14 @@ pub fn query_camera(world: &World) -> Result<Option<GameEntity>> {
     let wrapped_height: &DataWrapper<f32> = heights[0].cast()?;
     let wrapped_position: &DataWrapper<Point> = positions[0].cast()?;
     let velocity = None;
+    let acceleration = None;
 
     let game_entity = GameEntity {
         width: *wrapped_width.borrow(),
         height: *wrapped_height.borrow(),
         position: wrapped_position,
         velocity,
+        acceleration,
     };
     Ok(Some(game_entity))
 }

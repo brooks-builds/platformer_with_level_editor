@@ -64,6 +64,7 @@ impl UpdateSelectedSystem {
                 Event::Command(command) => match command {
                     Command::SelectUp => Some(command),
                     Command::SelectDown => Some(command),
+                    _ => None,
                 },
                 _ => None,
             }
@@ -113,6 +114,7 @@ impl UpdateSelectedSystem {
                     current_index + 1
                 }
             }
+            _ => current_index,
         }
     }
 

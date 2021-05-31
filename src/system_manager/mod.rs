@@ -9,6 +9,7 @@ use self::apply_gravity::ApplyGravitySystem;
 use self::camera::CameraSystem;
 use self::collide_with_platform::CollideWithPlatform;
 use self::draw_selectable_text::DrawText;
+use self::move_player::MovePlayer;
 use self::update_camera_position::UpdateCameraPosition;
 use self::update_forces::UpdateForcesSystem;
 use self::update_selected::UpdateSelectedSystem;
@@ -18,6 +19,7 @@ mod apply_gravity;
 mod camera;
 mod collide_with_platform;
 mod draw_selectable_text;
+mod move_player;
 mod update_camera_position;
 mod update_forces;
 mod update_selected;
@@ -32,6 +34,7 @@ pub struct SystemManager {
     update_forces: UpdateForcesSystem,
     collide_with_platform: CollideWithPlatform,
     update_camera_position: UpdateCameraPosition,
+    move_player: MovePlayer,
 }
 
 impl SystemManager {
@@ -44,6 +47,7 @@ impl SystemManager {
         let update_forces = UpdateForcesSystem;
         let collide_with_platform = CollideWithPlatform;
         let update_camera_position = UpdateCameraPosition;
+        let move_player = MovePlayer::new(event_manager);
 
         Self {
             draw_text,
@@ -54,16 +58,18 @@ impl SystemManager {
             update_forces,
             collide_with_platform,
             update_camera_position,
+            move_player,
         }
     }
 
-    pub fn update(&self, world: &World, context: &mut Context) -> Result<()> {
+    pub fn update(&mut self, world: &World, context: &mut Context) -> Result<()> {
         self.update_text.run(world, context)?;
         self.update_selected.run(world)?;
         self.apply_gravity.run(world)?;
         self.update_forces.run(world)?;
         self.collide_with_platform.run(world)?;
         self.update_camera_position.run(world)?;
+        self.move_player.run(world)?;
         Ok(())
     }
 

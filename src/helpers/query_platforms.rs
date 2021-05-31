@@ -35,6 +35,7 @@ pub fn query_platforms(world: &World) -> Result<Vec<GameEntity>> {
             width: *wrapped_width.borrow(),
             height: *wrapped_height.borrow(),
             velocity: None,
+            acceleration: None,
         };
 
         game_entities.push(game_entity);

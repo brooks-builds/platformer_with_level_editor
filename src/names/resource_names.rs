@@ -6,4 +6,5 @@ pub enum ResourceNames {
     FontSize,
     UnitSize,
     Gravity,
+    PlayerMoveSpeed,
 }

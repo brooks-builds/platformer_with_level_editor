@@ -2,4 +2,8 @@
 pub enum Command {
     SelectUp,
     SelectDown,
+    StartMovingRight,
+    StartMovingLeft,
+    StopMovingRight,
+    StopMovingLeft,
 }

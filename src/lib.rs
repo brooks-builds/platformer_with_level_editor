@@ -76,7 +76,9 @@ impl MainState {
             Point::new(150.0, 150.0),
         );
         self.world
-            .add_resource(ResourceNames::Gravity.to_string(), 0.001_f32);
+            .add_resource(ResourceNames::Gravity.to_string(), 0.01_f32);
+        self.world
+            .add_resource(ResourceNames::PlayerMoveSpeed.to_string(), 0.1_f32);
 
         self.world.register(ComponentNames::Text.to_string())?;
         self.world.register(ComponentNames::Position.to_string())?;
@@ -119,6 +121,10 @@ impl EventHandler for MainState {
             self.world.update().unwrap();
         }
 
+        if timer::ticks(context) % 500 == 0 {
+            dbg!(timer::fps(context));
+        }
+
         Ok(())
     }
 
@@ -139,6 +145,12 @@ impl EventHandler for MainState {
     ) {
         self.input_handler
             .handle_controller_input(button, &self.world, &mut self.navigation)
+            .unwrap();
+    }
+
+    fn gamepad_button_up_event(&mut self, _ctx: &mut Context, button: Button, _id: GamepadId) {
+        self.input_handler
+            .handle_stop_controller_input(button, &self.world, &mut self.navigation)
             .unwrap();
     }
 }

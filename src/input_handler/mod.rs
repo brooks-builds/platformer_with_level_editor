@@ -1,7 +1,10 @@
 use bbecs::world::World;
+use crossbeam::channel::Sender;
 use eyre::Result;
 use ggez::event::Button;
 
+use crate::command::Command;
+use crate::events::event::Event;
 use crate::events::EventManager;
 use crate::navigation::screens::NavigationScreens;
 use crate::navigation::Navigation;
@@ -27,6 +30,7 @@ pub struct InputHandler {
     title_screen: TitleScreenInputHandler,
     level_select: LevelSelectInputHandler,
     settings: SettingsInputHandler,
+    event_sender: Sender<Event>,
 }
 
 impl InputHandler {
@@ -34,12 +38,13 @@ impl InputHandler {
         let event_sender = event_manager.register();
         let title_screen = TitleScreenInputHandler::new(event_sender.clone());
         let level_select = LevelSelectInputHandler::new(event_sender.clone());
-        let settings = SettingsInputHandler::new(event_sender);
+        let settings = SettingsInputHandler::new(event_sender.clone());
 
         Self {
             title_screen,
             level_select,
             settings,
+            event_sender,
         }
     }
 
@@ -67,7 +72,44 @@ impl InputHandler {
                 .handle_controller_input(world, button, navigation)?,
             NavigationScreens::Credits => {}
             NavigationScreens::Unknown => {}
-            NavigationScreens::Play => {}
+            NavigationScreens::Play => match button {
+                Button::DPadLeft => {
+                    let command = Command::StartMovingLeft;
+                    self.event_sender.send(Event::Command(command))?;
+                }
+                Button::DPadRight => {
+                    let command = Command::StartMovingRight;
+                    self.event_sender.send(Event::Command(command))?;
+                }
+                _ => {}
+            },
+        }
+        Ok(())
+    }
+
+    pub fn handle_stop_controller_input(
+        &mut self,
+        button: Button,
+        _world: &World,
+        navigation: &mut Navigation,
+    ) -> Result<()> {
+        match navigation.get_current_screen() {
+            NavigationScreens::Title => {}
+            NavigationScreens::LevelSelect => {}
+            NavigationScreens::Settings => {}
+            NavigationScreens::Credits => {}
+            NavigationScreens::Unknown => {}
+            NavigationScreens::Play => match button {
+                Button::DPadLeft => {
+                    let command = Command::StopMovingLeft;
+                    self.event_sender.send(Event::Command(command))?;
+                }
+                Button::DPadRight => {
+                    let command = Command::StopMovingRight;
+                    self.event_sender.send(Event::Command(command))?;
+                }
+                _ => {}
+            },
         }
         Ok(())
     }

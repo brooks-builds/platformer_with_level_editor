@@ -5,4 +5,5 @@ pub struct GameEntity<'a> {
     pub height: f32,
     pub position: &'a DataWrapper<Point>,
     pub velocity: Option<&'a DataWrapper<Point>>,
+    pub acceleration: Option<&'a DataWrapper<Point>>,
 }
