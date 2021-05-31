@@ -8,7 +8,8 @@ pub struct LevelManager {
 
 impl LevelManager {
     pub fn new() -> Self {
-        let level = Level::new();
+        let mut level = Level::new();
+        level.add_floor();
         Self { level }
     }
 
