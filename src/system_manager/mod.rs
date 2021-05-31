@@ -7,6 +7,7 @@ use crate::image_manager::ImageManager;
 
 use self::apply_gravity::ApplyGravitySystem;
 use self::camera::CameraSystem;
+use self::collide_with_platform::CollideWithPlatform;
 use self::draw_selectable_text::DrawText;
 use self::update_forces::UpdateForcesSystem;
 use self::update_selected::UpdateSelectedSystem;
@@ -14,6 +15,7 @@ use self::update_text::UpdateTextSystem;
 
 mod apply_gravity;
 mod camera;
+mod collide_with_platform;
 mod draw_selectable_text;
 mod update_forces;
 mod update_selected;
@@ -26,6 +28,7 @@ pub struct SystemManager {
     draw_entities: CameraSystem,
     apply_gravity: ApplyGravitySystem,
     update_forces: UpdateForcesSystem,
+    collide_with_platform: CollideWithPlatform,
 }
 
 impl SystemManager {
@@ -36,6 +39,7 @@ impl SystemManager {
         let draw_entities = CameraSystem;
         let apply_gravity = ApplyGravitySystem;
         let update_forces = UpdateForcesSystem;
+        let collide_with_platform = CollideWithPlatform;
 
         Self {
             draw_text,
@@ -44,6 +48,7 @@ impl SystemManager {
             draw_entities,
             apply_gravity,
             update_forces,
+            collide_with_platform,
         }
     }
 
@@ -52,6 +57,7 @@ impl SystemManager {
         self.update_selected.run(world)?;
         self.apply_gravity.run(world)?;
         self.update_forces.run(world)?;
+        self.collide_with_platform.run(world)?;
         Ok(())
     }
 

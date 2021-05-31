@@ -97,6 +97,7 @@ impl MainState {
         self.world.register(ComponentNames::Height.to_string())?;
         self.world.register(ComponentNames::Platform.to_string())?;
         self.world.register(ComponentNames::ImageName.to_string())?;
+        self.world.register(ComponentNames::Player.to_string())?;
 
         self.loader_manager
             .setup(&mut self.world, context, &self.level_manager)?;
