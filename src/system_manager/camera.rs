@@ -48,12 +48,14 @@ impl CameraSystem {
                     .dest([
                         -(wrapped_camera_position.borrow().x
                             - *wrapped_camera_width.borrow() / 2.0),
-                        wrapped_camera_position.borrow().y - *wrapped_camera_height.borrow() / 2.0,
+                        -(wrapped_camera_position.borrow().y
+                            - *wrapped_camera_height.borrow() / 2.0),
                     ])
                     .to_matrix(),
             ),
         );
         self.draw_entities(world, context, image_manager)?;
+        graphics::apply_transformations(context)?;
         graphics::pop_transform(context);
 
         Ok(())

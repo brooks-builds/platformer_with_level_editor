@@ -16,7 +16,7 @@ impl PlayLoader {
         InsertIntoWorld::new()
             .set_acceleration(Point::new(0.0, 0.0))
             .set_position(Point::new(1920.0 / 2.0, 1080.0 / 2.0))
-            .set_velocity(Point::new(1.0, 0.0))
+            .set_velocity(Point::new(0.0, 0.0))
             .set_camera(true)
             .set_width(1920.0)
             .set_height(1080.0)
