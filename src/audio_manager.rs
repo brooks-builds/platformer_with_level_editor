@@ -5,7 +5,7 @@ use ggez::Context;
 
 use crate::events::event::Event;
 use crate::events::EventManager;
-use crate::states::navigation::Navigation;
+use crate::navigation::screens::NavigationScreens;
 
 pub struct AudioManager {
     event_receiver: Receiver<Event>,
@@ -18,7 +18,7 @@ impl AudioManager {
         let menu_select = Source::new(context, "/menu_select.mp3")?;
         let event_receiver = event_manager.subscribe(vec![
             Event::ChangeMenuItem.to_string(),
-            Event::NavigatingTo(Navigation::SelectLevel).to_string(),
+            Event::NavigatingTo(NavigationScreens::LevelSelect).to_string(),
         ]);
         let menu_navigate = Source::new(context, "/menu_navigate.mp3")?;
 

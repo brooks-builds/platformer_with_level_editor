@@ -8,4 +8,13 @@ pub enum ComponentNames {
     Selected,
     Text,
     TextFragment,
+    Velocity,
+    Acceleration,
+    AffectedByGravity,
+    Camera,
+    Width,
+    Height,
+    Platform,
+    ImageName,
+    Player,
 }
