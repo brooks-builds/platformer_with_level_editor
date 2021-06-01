@@ -4,10 +4,12 @@ use ggez::Context;
 
 use crate::events::EventManager;
 use crate::image_manager::ImageManager;
+use crate::level_manager::level::Level;
 
 use self::apply_gravity::ApplyGravitySystem;
 use self::camera::CameraSystem;
 use self::collide_with_platform::CollideWithPlatform;
+use self::draw_editing_level::DrawEditingLevel;
 use self::draw_selectable_text::DrawText;
 use self::move_player::MovePlayer;
 use self::update_camera_position::UpdateCameraPosition;
@@ -18,6 +20,7 @@ use self::update_text::UpdateTextSystem;
 mod apply_gravity;
 mod camera;
 mod collide_with_platform;
+mod draw_editing_level;
 mod draw_selectable_text;
 mod move_player;
 mod update_camera_position;
@@ -35,6 +38,7 @@ pub struct SystemManager {
     collide_with_platform: CollideWithPlatform,
     update_camera_position: UpdateCameraPosition,
     move_player: MovePlayer,
+    draw_editing_level: DrawEditingLevel,
 }
 
 impl SystemManager {
@@ -48,6 +52,7 @@ impl SystemManager {
         let collide_with_platform = CollideWithPlatform;
         let update_camera_position = UpdateCameraPosition;
         let move_player = MovePlayer::new(event_manager);
+        let draw_editing_level = DrawEditingLevel::new(event_manager);
 
         Self {
             draw_text,
@@ -59,6 +64,7 @@ impl SystemManager {
             collide_with_platform,
             update_camera_position,
             move_player,
+            draw_editing_level,
         }
     }
 
@@ -74,13 +80,15 @@ impl SystemManager {
     }
 
     pub fn display(
-        &self,
+        &mut self,
         world: &World,
         context: &mut Context,
         image_manager: &ImageManager,
+        level: &Level,
     ) -> Result<()> {
         self.draw_text.run(world, context)?;
         self.draw_entities.run(world, context, image_manager)?;
+        self.draw_editing_level.run(context, level)?;
 
         Ok(())
     }

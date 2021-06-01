@@ -16,10 +16,6 @@ impl<'a> GameEntity<'a> {
         Some(position)
     }
 
-    pub fn bottom(&self) -> f32 {
-        self.position.borrow().y + self.height / 2.0
-    }
-
     pub fn top(&self) -> f32 {
         self.position.borrow().y - self.height / 2.0
     }

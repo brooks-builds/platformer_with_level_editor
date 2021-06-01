@@ -8,4 +8,5 @@ pub enum NavigationScreens {
     Credits,
     Unknown,
     Play,
+    EditLevel,
 }

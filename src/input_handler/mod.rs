@@ -2,6 +2,7 @@ use bbecs::world::World;
 use crossbeam::channel::Sender;
 use eyre::Result;
 use ggez::event::Button;
+use ggez::event::KeyCode;
 
 use crate::command::Command;
 use crate::events::event::Event;
@@ -83,6 +84,7 @@ impl InputHandler {
                 }
                 _ => {}
             },
+            NavigationScreens::EditLevel => {}
         }
         Ok(())
     }
@@ -97,8 +99,7 @@ impl InputHandler {
             NavigationScreens::Title => {}
             NavigationScreens::LevelSelect => {}
             NavigationScreens::Settings => {}
-            NavigationScreens::Credits => {}
-            NavigationScreens::Unknown => {}
+            NavigationScreens::Credits | NavigationScreens::Unknown => {}
             NavigationScreens::Play => match button {
                 Button::DPadLeft => {
                     let command = Command::StopMovingLeft;
@@ -110,6 +111,32 @@ impl InputHandler {
                 }
                 _ => {}
             },
+            NavigationScreens::EditLevel => todo!(),
+        }
+        Ok(())
+    }
+
+    pub fn handle_keyboard_input(
+        &mut self,
+        keycode: KeyCode,
+        navigation: &mut Navigation,
+    ) -> Result<()> {
+        match navigation.get_current_screen() {
+            NavigationScreens::Title => {}
+            NavigationScreens::LevelSelect => {}
+            NavigationScreens::Settings => {}
+            NavigationScreens::Credits => {}
+            NavigationScreens::Unknown => {}
+            NavigationScreens::Play => {
+                let event = Event::NavigatingTo(NavigationScreens::EditLevel);
+                self.event_sender.send(event)?;
+            }
+            NavigationScreens::EditLevel => {
+                let event = Event::NavigatingTo(NavigationScreens::Play);
+                if let KeyCode::P = keycode {
+                    self.event_sender.send(event)?;
+                }
+            }
         }
         Ok(())
     }

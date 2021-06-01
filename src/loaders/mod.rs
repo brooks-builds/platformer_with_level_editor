@@ -12,11 +12,13 @@ use crate::events::EventManager;
 use crate::level_manager::LevelManager;
 use crate::navigation::screens::NavigationScreens;
 
+use self::edit_scene::EditScene;
 use self::play::PlayLoader;
 use self::select_level::SelectLevelLoader;
 use self::settings::SettingsLoader;
 use self::title_screen::TitleScreenLoader;
 
+mod edit_scene;
 mod insert_into_world;
 mod play;
 mod select_level;
@@ -38,6 +40,7 @@ pub struct LoaderManager {
     select_level: SelectLevelLoader,
     settings: SettingsLoader,
     play: PlayLoader,
+    edit_scene: EditScene,
 }
 
 impl LoaderManager {
@@ -50,6 +53,7 @@ impl LoaderManager {
         let select_level = SelectLevelLoader;
         let settings = SettingsLoader;
         let play = PlayLoader;
+        let edit_scene = EditScene;
 
         Self {
             event_receiver,
@@ -57,6 +61,7 @@ impl LoaderManager {
             select_level,
             settings,
             play,
+            edit_scene,
         }
     }
 
@@ -93,6 +98,9 @@ impl LoaderManager {
                     NavigationScreens::Credits => {}
                     NavigationScreens::Unknown => {}
                     NavigationScreens::Play => self.play.load(world, context, level_manager)?,
+                    NavigationScreens::EditLevel => {
+                        self.edit_scene.load(world, context, level_manager)?
+                    }
                 }
             }
         }

@@ -3,7 +3,7 @@ use bbecs::data_types::point::Point;
 use bbecs::world::{World, WorldMethods};
 use events::EventManager;
 use eyre::Result;
-use ggez::event::{Button, EventHandler, GamepadId};
+use ggez::event::{Button, EventHandler, GamepadId, KeyCode, KeyMods};
 use ggez::graphics::BLACK;
 use ggez::{graphics, timer, Context};
 use image_manager::ImageManager;
@@ -131,7 +131,12 @@ impl EventHandler for MainState {
     fn draw(&mut self, context: &mut Context) -> ggez::GameResult {
         graphics::clear(context, BLACK);
         self.system_manager
-            .display(&self.world, context, &self.image_manager)
+            .display(
+                &self.world,
+                context,
+                &self.image_manager,
+                &self.level_manager.get_level(),
+            )
             .unwrap();
 
         graphics::present(context)
@@ -151,6 +156,18 @@ impl EventHandler for MainState {
     fn gamepad_button_up_event(&mut self, _ctx: &mut Context, button: Button, _id: GamepadId) {
         self.input_handler
             .handle_stop_controller_input(button, &self.world, &mut self.navigation)
+            .unwrap();
+    }
+
+    fn key_down_event(
+        &mut self,
+        _context: &mut Context,
+        keycode: KeyCode,
+        _keymods: KeyMods,
+        _repeat: bool,
+    ) {
+        self.input_handler
+            .handle_keyboard_input(keycode, &mut self.navigation)
             .unwrap();
     }
 }
