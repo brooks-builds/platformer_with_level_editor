@@ -14,16 +14,16 @@ use crate::navigation::screens::NavigationScreens;
 
 use self::edit_scene::EditScene;
 use self::play::PlayLoader;
-use self::select_level::SelectLevelLoader;
+use self::select_level_loader::SelectLevelLoader;
 use self::settings::SettingsLoader;
-use self::title_screen::TitleScreenLoader;
+use self::title_screen_loader::TitleScreenLoader;
 
 mod edit_scene;
 mod insert_into_world;
 mod play;
-mod select_level;
+mod select_level_loader;
 mod settings;
-mod title_screen;
+mod title_screen_loader;
 
 trait Loader {
     fn load(

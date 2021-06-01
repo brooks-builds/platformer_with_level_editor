@@ -62,7 +62,7 @@ impl TitleScreenLoader {
         );
 
         InsertIntoWorld::new()
-            .set_navigate_to(NavigationScreens::Play.to_string())
+            .set_navigate_to(NavigationScreens::LevelSelect.to_string())
             .set_position(play_position)
             .set_selectable(true)
             .set_selected(true)

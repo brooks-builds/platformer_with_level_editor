@@ -6,7 +6,9 @@ use eyre::Result;
 use ggez::graphics::{Font, Scale, Text, TextFragment, WHITE};
 use ggez::Context;
 
+use crate::helpers::get_resource::get_f32;
 use crate::level_manager::LevelManager;
+use crate::names::resource_names::ResourceNames;
 
 use super::insert_into_world::InsertIntoWorld;
 use super::Loader;
@@ -38,6 +40,29 @@ impl SelectLevelLoader {
         );
         Ok(*resource)
     }
+
+    fn create_list_of_levels(&self, world: &mut World, level_manager: &LevelManager) -> Result<()> {
+        let levels = level_manager.get_all_levels();
+        let font_size = get_f32(&world, ResourceNames::FontSize.as_ref());
+
+        for (index, level) in levels.iter().enumerate() {
+            let text_fragment =
+                TextFragment::new(level.name.clone()).scale(Scale::uniform(font_size));
+            let text = Text::new(text_fragment.clone());
+            let position = Point::new(10.0, 100.0 + index as f32 * font_size);
+            let selected = index == 0;
+
+            InsertIntoWorld::new()
+                .set_text(text)
+                .set_position(position)
+                .set_selectable(true)
+                .set_selected(selected)
+                .set_text_fragment(text_fragment)
+                .insert(world)?;
+        }
+
+        Ok(())
+    }
 }
 
 impl Loader for SelectLevelLoader {
@@ -45,9 +70,10 @@ impl Loader for SelectLevelLoader {
         &mut self,
         world: &mut World,
         context: &mut Context,
-        _level_manager: &LevelManager,
+        level_manager: &LevelManager,
     ) -> Result<()> {
         self.create_title(world, context)?;
+        self.create_list_of_levels(world, level_manager)?;
         Ok(())
     }
 }

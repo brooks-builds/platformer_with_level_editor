@@ -1,7 +1,7 @@
 use crossbeam::channel::Sender;
 use eyre::Result;
 
-use crate::{events::event::Event, navigation::Navigation};
+use crate::{command::Command, events::event::Event, navigation::Navigation};
 
 use super::HandleInput;
 
@@ -16,7 +16,6 @@ impl LevelSelectInputHandler {
 
     fn send_back_event(&mut self, navigation: &mut Navigation) -> Result<()> {
         navigation.pop();
-        dbg!(navigation.get_current_screen());
         let event = Event::NavigatingTo(navigation.get_current_screen());
         self.event_sender.send(event)?;
         Ok(())
@@ -30,7 +29,6 @@ impl HandleInput for LevelSelectInputHandler {
         button: ggez::event::Button,
         navigation: &mut Navigation,
     ) -> eyre::Result<()> {
-        dbg!("hit button", &button);
         match button {
             ggez::event::Button::South => {}
             ggez::event::Button::East => self.send_back_event(navigation)?,
@@ -47,8 +45,12 @@ impl HandleInput for LevelSelectInputHandler {
             ggez::event::Button::Mode => {}
             ggez::event::Button::LeftThumb => {}
             ggez::event::Button::RightThumb => {}
-            ggez::event::Button::DPadUp => {}
-            ggez::event::Button::DPadDown => {}
+            ggez::event::Button::DPadUp => {
+                self.event_sender.send(Event::Command(Command::SelectUp))?
+            }
+            ggez::event::Button::DPadDown => self
+                .event_sender
+                .send(Event::Command(Command::SelectDown))?,
             ggez::event::Button::DPadLeft => {}
             ggez::event::Button::DPadRight => {}
             ggez::event::Button::Unknown => {}
