@@ -27,10 +27,11 @@ pub struct Level {
     pub unit_width: f32,
     pub unit_height: f32,
     pub map: HashMap<GridCoordinate, Entity>,
+    pub name: String,
 }
 
 impl Level {
-    pub fn new() -> Self {
+    pub fn new(name: String) -> Self {
         let start = GridCoordinate::new(2, 0);
         let width = 100;
         let height = 15;
@@ -55,6 +56,7 @@ impl Level {
             unit_width,
             unit_height,
             map,
+            name,
         }
     }
 
