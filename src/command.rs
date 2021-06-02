@@ -6,4 +6,5 @@ pub enum Command {
     StartMovingLeft,
     StopMovingRight,
     StopMovingLeft,
+    Jump,
 }

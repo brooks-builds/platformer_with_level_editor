@@ -7,4 +7,5 @@ pub enum ResourceNames {
     UnitSize,
     Gravity,
     PlayerMoveSpeed,
+    JumpForce,
 }

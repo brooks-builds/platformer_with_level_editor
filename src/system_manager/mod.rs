@@ -11,6 +11,7 @@ use self::camera::CameraSystem;
 use self::collide_with_platform::CollideWithPlatform;
 use self::draw_editing_level::DrawEditingLevel;
 use self::draw_selectable_text::DrawText;
+use self::jump_system::JumpSystem;
 use self::move_player::MovePlayer;
 use self::update_camera_position::UpdateCameraPosition;
 use self::update_forces::UpdateForcesSystem;
@@ -22,6 +23,7 @@ mod camera;
 mod collide_with_platform;
 mod draw_editing_level;
 mod draw_selectable_text;
+mod jump_system;
 mod move_player;
 mod update_camera_position;
 mod update_forces;
@@ -39,6 +41,7 @@ pub struct SystemManager {
     update_camera_position: UpdateCameraPosition,
     move_player: MovePlayer,
     draw_editing_level: DrawEditingLevel,
+    jump_system: JumpSystem,
 }
 
 impl SystemManager {
@@ -53,6 +56,7 @@ impl SystemManager {
         let update_camera_position = UpdateCameraPosition;
         let move_player = MovePlayer::new(event_manager);
         let draw_editing_level = DrawEditingLevel::new(event_manager);
+        let jump_system = JumpSystem::new(event_manager);
 
         Self {
             draw_text,
@@ -65,6 +69,7 @@ impl SystemManager {
             update_camera_position,
             move_player,
             draw_editing_level,
+            jump_system,
         }
     }
 
@@ -76,6 +81,7 @@ impl SystemManager {
         self.collide_with_platform.run(world)?;
         self.update_camera_position.run(world)?;
         self.move_player.run(world)?;
+        self.jump_system.run(world)?;
         Ok(())
     }
 

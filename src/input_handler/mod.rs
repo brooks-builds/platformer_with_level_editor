@@ -82,6 +82,10 @@ impl InputHandler {
                     let command = Command::StartMovingRight;
                     self.event_sender.send(Event::Command(command))?;
                 }
+                Button::South => {
+                    let command = Command::Jump;
+                    self.event_sender.send(Event::Command(command))?;
+                }
                 _ => {}
             },
             NavigationScreens::EditLevel => {}
