@@ -4,7 +4,7 @@ use ggez::Context;
 
 use crate::events::EventManager;
 use crate::image_manager::ImageManager;
-use crate::level_manager::level::Level;
+use crate::level_manager::LevelManager;
 
 use self::apply_gravity::ApplyGravitySystem;
 use self::camera::CameraSystem;
@@ -84,11 +84,11 @@ impl SystemManager {
         world: &World,
         context: &mut Context,
         image_manager: &ImageManager,
-        level: &Level,
+        level_manager: &LevelManager,
     ) -> Result<()> {
         self.draw_text.run(world, context)?;
         self.draw_entities.run(world, context, image_manager)?;
-        self.draw_editing_level.run(context, level)?;
+        self.draw_editing_level.run(context, level_manager, world)?;
 
         Ok(())
     }

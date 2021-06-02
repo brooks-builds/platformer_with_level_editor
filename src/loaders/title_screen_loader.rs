@@ -10,7 +10,6 @@ use crate::names::resource_names::ResourceNames;
 use crate::navigation::screens::NavigationScreens;
 
 use super::insert_into_world::InsertIntoWorld;
-use super::Loader;
 
 pub struct TitleScreenLoader;
 
@@ -130,10 +129,8 @@ impl TitleScreenLoader {
 
         Ok(())
     }
-}
 
-impl Loader for TitleScreenLoader {
-    fn load(
+    pub fn load(
         &mut self,
         world: &mut World,
         context: &mut Context,

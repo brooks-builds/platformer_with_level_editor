@@ -25,15 +25,6 @@ mod select_level_loader;
 mod settings;
 mod title_screen_loader;
 
-trait Loader {
-    fn load(
-        &mut self,
-        world: &mut World,
-        context: &mut Context,
-        level_manager: &LevelManager,
-    ) -> Result<()>;
-}
-
 pub struct LoaderManager {
     event_receiver: Receiver<Event>,
     title_screen: TitleScreenLoader,
@@ -97,7 +88,9 @@ impl LoaderManager {
                     }
                     NavigationScreens::Credits => {}
                     NavigationScreens::Unknown => {}
-                    NavigationScreens::Play => self.play.load(world, context, level_manager)?,
+                    NavigationScreens::Play(level_name) => {
+                        self.play.load(world, level_manager, level_name)?
+                    }
                     NavigationScreens::EditLevel => {
                         self.edit_scene.load(world, context, level_manager)?
                     }

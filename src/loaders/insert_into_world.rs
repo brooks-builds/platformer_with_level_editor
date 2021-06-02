@@ -24,6 +24,7 @@ pub struct InsertIntoWorld {
     platform: Option<bool>,
     image_name: Option<String>,
     player: Option<bool>,
+    name: Option<String>,
 }
 
 impl InsertIntoWorld {
@@ -106,6 +107,11 @@ impl InsertIntoWorld {
         self
     }
 
+    pub fn set_name(mut self, name: &str) -> Self {
+        self.name = Some(name.to_owned());
+        self
+    }
+
     pub fn insert(self, world: &mut World) -> Result<()> {
         world.spawn_entity()?;
 
@@ -170,6 +176,10 @@ impl InsertIntoWorld {
 
         if let Some(player) = self.player {
             world.with_component(ComponentNames::Player.as_ref(), player)?;
+        }
+
+        if let Some(name) = self.name {
+            world.with_component(ComponentNames::Name.as_ref(), name)?;
         }
 
         Ok(())

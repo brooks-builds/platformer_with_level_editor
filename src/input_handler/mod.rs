@@ -73,7 +73,7 @@ impl InputHandler {
                 .handle_controller_input(world, button, navigation)?,
             NavigationScreens::Credits => {}
             NavigationScreens::Unknown => {}
-            NavigationScreens::Play => match button {
+            NavigationScreens::Play(_) => match button {
                 Button::DPadLeft => {
                     let command = Command::StartMovingLeft;
                     self.event_sender.send(Event::Command(command))?;
@@ -100,7 +100,7 @@ impl InputHandler {
             NavigationScreens::LevelSelect => {}
             NavigationScreens::Settings => {}
             NavigationScreens::Credits | NavigationScreens::Unknown => {}
-            NavigationScreens::Play => match button {
+            NavigationScreens::Play(_) => match button {
                 Button::DPadLeft => {
                     let command = Command::StopMovingLeft;
                     self.event_sender.send(Event::Command(command))?;
@@ -127,12 +127,12 @@ impl InputHandler {
             NavigationScreens::Settings => {}
             NavigationScreens::Credits => {}
             NavigationScreens::Unknown => {}
-            NavigationScreens::Play => {
+            NavigationScreens::Play(_level_name) => {
                 let event = Event::NavigatingTo(NavigationScreens::EditLevel);
                 self.event_sender.send(event)?;
             }
             NavigationScreens::EditLevel => {
-                let event = Event::NavigatingTo(NavigationScreens::Play);
+                let event = Event::NavigatingTo(NavigationScreens::Play("".to_string()));
                 if let KeyCode::P = keycode {
                     self.event_sender.send(event)?;
                 }

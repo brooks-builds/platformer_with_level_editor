@@ -1,3 +1,8 @@
+use bbecs::{
+    components::CastComponents,
+    query,
+    world::{DataWrapper, World},
+};
 use crossbeam::channel::Receiver;
 use eyre::Result;
 use ggez::{
@@ -7,7 +12,8 @@ use ggez::{
 
 use crate::{
     events::{event::Event, EventManager},
-    level_manager::level::Level,
+    level_manager::{level::Level, LevelManager},
+    names::component_names::ComponentNames,
     navigation::screens::NavigationScreens,
 };
 
@@ -30,11 +36,24 @@ impl DrawEditingLevel {
         }
     }
 
-    pub fn run(&mut self, context: &mut Context, level: &Level) -> Result<()> {
+    pub fn run(
+        &mut self,
+        context: &mut Context,
+        level_manager: &LevelManager,
+        world: &World,
+    ) -> Result<()> {
         self.update_is_editing()?;
         if !self.is_editing {
             return Ok(());
         }
+
+        let level_name = if let Some(name) = self.get_current_level_name(world)? {
+            name
+        } else {
+            return Ok(());
+        };
+
+        let level = level_manager.get_level(&level_name).unwrap();
 
         let cell_size = self.calculate_cell_size(level, context);
         let mut mesh_builder = MeshBuilder::new();
@@ -62,7 +81,7 @@ impl DrawEditingLevel {
         if let Ok(event) = self.event_receiver.try_recv() {
             match event {
                 Event::NavigatingTo(NavigationScreens::EditLevel) => self.is_editing = true,
-                Event::NavigatingTo(NavigationScreens::Play) => self.is_editing = false,
+                Event::NavigatingTo(NavigationScreens::Play(_)) => self.is_editing = false,
                 _ => {}
             }
         }
@@ -79,5 +98,24 @@ impl DrawEditingLevel {
         } else {
             height
         }
+    }
+
+    fn get_current_level_name(&self, world: &World) -> Result<Option<String>> {
+        let query;
+        let (name_components, selected_components) = query!(
+            world,
+            query,
+            ComponentNames::Name.as_ref(),
+            ComponentNames::Selected.as_ref()
+        );
+
+        for (index, selected_component) in selected_components.iter().enumerate() {
+            let wrapped_selected_component: &DataWrapper<bool> = selected_component.cast()?;
+            if *wrapped_selected_component.borrow() {
+                let wrapped_name: &DataWrapper<String> = name_components[index].cast()?;
+                return Ok(Some(wrapped_name.borrow().clone()));
+            }
+        }
+        Ok(None)
     }
 }

@@ -1,12 +1,12 @@
 use bbecs::data_types::point::Point;
 use ggez::graphics::Text;
 
-use super::{insert_into_world::InsertIntoWorld, Loader};
+use super::insert_into_world::InsertIntoWorld;
 
 pub struct EditScene;
 
-impl Loader for EditScene {
-    fn load(
+impl EditScene {
+    pub fn load(
         &mut self,
         world: &mut bbecs::world::World,
         _context: &mut ggez::Context,

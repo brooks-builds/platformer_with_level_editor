@@ -25,7 +25,10 @@ impl Navigation {
     }
 
     pub fn get_current_screen(&self) -> NavigationScreens {
-        *self.history.last().unwrap_or(&NavigationScreens::Unknown)
+        self.history
+            .last()
+            .unwrap_or(&NavigationScreens::Unknown)
+            .clone()
     }
 
     pub fn pop(&mut self) -> NavigationScreens {
@@ -38,7 +41,6 @@ impl Navigation {
             "LevelSelect" => NavigationScreens::LevelSelect,
             "Settings" => NavigationScreens::Settings,
             "Credits" => NavigationScreens::Credits,
-            "Play" => NavigationScreens::Play,
             _ => NavigationScreens::Unknown,
         }
     }

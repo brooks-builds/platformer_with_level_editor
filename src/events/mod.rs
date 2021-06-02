@@ -34,7 +34,7 @@ impl EventManager {
             if let Some(subscribers) = self.event_subscribers.get_mut(event.as_ref()) {
                 subscribers
                     .iter_mut()
-                    .try_for_each(|subscriber| subscriber.send(event))?;
+                    .try_for_each(|subscriber| subscriber.send(event.clone()))?;
             }
         }
         Ok(())

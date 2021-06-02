@@ -1,12 +1,12 @@
 use strum_macros::ToString;
 
-#[derive(Debug, Clone, Copy, ToString)]
+#[derive(Debug, Clone, ToString)]
 pub enum NavigationScreens {
     Title,
     LevelSelect,
     Settings,
     Credits,
     Unknown,
-    Play,
+    Play(String),
     EditLevel,
 }

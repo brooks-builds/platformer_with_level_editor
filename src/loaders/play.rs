@@ -1,5 +1,5 @@
 use bbecs::{data_types::point::Point, world::World};
-use eyre::Result;
+use eyre::{bail, Result};
 
 use crate::{
     image_manager::ImageName,
@@ -7,7 +7,7 @@ use crate::{
 };
 
 use super::super::level_manager::level::Entity;
-use super::{insert_into_world::InsertIntoWorld, Loader};
+use super::insert_into_world::InsertIntoWorld;
 
 pub struct PlayLoader;
 
@@ -53,16 +53,18 @@ impl PlayLoader {
 
         Ok(())
     }
-}
 
-impl Loader for PlayLoader {
-    fn load(
+    pub fn load(
         &mut self,
         world: &mut bbecs::world::World,
-        _context: &mut ggez::Context,
         level_manager: &LevelManager,
+        level_name: String,
     ) -> eyre::Result<()> {
-        let level = level_manager.get_level();
+        let level = if let Some(level) = level_manager.get_level(&level_name) {
+            level
+        } else {
+            bail!("Could not find a level with name {}", level_name);
+        };
 
         self.load_camera(world, level)?;
         self.load_entities(world, level)?;

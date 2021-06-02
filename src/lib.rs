@@ -100,6 +100,7 @@ impl MainState {
         self.world.register(ComponentNames::Platform.to_string())?;
         self.world.register(ComponentNames::ImageName.to_string())?;
         self.world.register(ComponentNames::Player.to_string())?;
+        self.world.register(ComponentNames::Name.to_string())?;
 
         self.loader_manager
             .setup(&mut self.world, context, &self.level_manager)?;
@@ -135,7 +136,7 @@ impl EventHandler for MainState {
                 &self.world,
                 context,
                 &self.image_manager,
-                &self.level_manager.get_level(),
+                &self.level_manager,
             )
             .unwrap();
 

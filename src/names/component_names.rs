@@ -17,4 +17,5 @@ pub enum ComponentNames {
     Platform,
     ImageName,
     Player,
+    Name,
 }

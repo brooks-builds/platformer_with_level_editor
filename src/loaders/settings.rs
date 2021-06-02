@@ -10,7 +10,7 @@ use crate::{
     names::resource_names::ResourceNames,
 };
 
-use super::{insert_into_world::InsertIntoWorld, Loader};
+use super::insert_into_world::InsertIntoWorld;
 
 pub struct SettingsLoader;
 
@@ -33,10 +33,8 @@ impl SettingsLoader {
             .insert(world)?;
         Ok(())
     }
-}
 
-impl Loader for SettingsLoader {
-    fn load(
+    pub fn load(
         &mut self,
         world: &mut bbecs::world::World,
         context: &mut ggez::Context,

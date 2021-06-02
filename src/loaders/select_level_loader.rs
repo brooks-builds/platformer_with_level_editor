@@ -11,7 +11,6 @@ use crate::level_manager::LevelManager;
 use crate::names::resource_names::ResourceNames;
 
 use super::insert_into_world::InsertIntoWorld;
-use super::Loader;
 
 pub struct SelectLevelLoader;
 
@@ -51,6 +50,7 @@ impl SelectLevelLoader {
             let text = Text::new(text_fragment.clone());
             let position = Point::new(10.0, 100.0 + index as f32 * font_size);
             let selected = index == 0;
+            let level_name = &level.name;
 
             InsertIntoWorld::new()
                 .set_text(text)
@@ -58,15 +58,14 @@ impl SelectLevelLoader {
                 .set_selectable(true)
                 .set_selected(selected)
                 .set_text_fragment(text_fragment)
+                .set_name(level_name)
                 .insert(world)?;
         }
 
         Ok(())
     }
-}
 
-impl Loader for SelectLevelLoader {
-    fn load(
+    pub fn load(
         &mut self,
         world: &mut World,
         context: &mut Context,
