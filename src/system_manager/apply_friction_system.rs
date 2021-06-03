@@ -3,7 +3,7 @@ use eyre::Result;
 
 use crate::{
     helpers::{get_resource::get_f32, query_player::query_player},
-    names::{entity_states::EntityStates, resource_names::ResourceNames},
+    names::resource_names::ResourceNames,
 };
 
 pub struct ApplyFrictionSystem;
