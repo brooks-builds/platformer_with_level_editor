@@ -76,11 +76,15 @@ impl MainState {
             Point::new(150.0, 150.0),
         );
         self.world
-            .add_resource(ResourceNames::Gravity.to_string(), 0.01_f32);
+            .add_resource(ResourceNames::Gravity.to_string(), 0.5_f32);
         self.world
-            .add_resource(ResourceNames::PlayerMoveSpeed.to_string(), 0.1_f32);
+            .add_resource(ResourceNames::PlayerMoveSpeed.to_string(), 1.0_f32);
         self.world
-            .add_resource(ResourceNames::JumpForce.to_string(), 1.0_f32);
+            .add_resource(ResourceNames::JumpForce.to_string(), 500.0_f32);
+        self.world
+            .add_resource(ResourceNames::Friction.to_string(), 0.2_f32);
+        self.world
+            .add_resource(ResourceNames::MaxVelocity.to_string(), 10.0);
 
         self.world.register(ComponentNames::Text.to_string())?;
         self.world.register(ComponentNames::Position.to_string())?;

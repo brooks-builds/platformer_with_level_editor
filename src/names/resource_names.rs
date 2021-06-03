@@ -8,4 +8,6 @@ pub enum ResourceNames {
     Gravity,
     PlayerMoveSpeed,
     JumpForce,
+    Friction,
+    MaxVelocity,
 }

@@ -6,7 +6,10 @@ use bbecs::{
 };
 use eyre::Result;
 
-use crate::names::component_names::ComponentNames;
+use crate::{
+    helpers::get_resource::get_f32,
+    names::{component_names::ComponentNames, resource_names::ResourceNames},
+};
 
 pub struct UpdateForcesSystem;
 
@@ -20,6 +23,7 @@ impl UpdateForcesSystem {
             ComponentNames::Velocity.as_ref(),
             ComponentNames::Position.as_ref()
         );
+        let max_velocity = get_f32(world, ResourceNames::MaxVelocity.as_ref());
 
         for (index, acceleration) in accelerations.iter().enumerate() {
             let acceleration: &DataWrapper<Point> = acceleration.cast()?;
@@ -27,6 +31,7 @@ impl UpdateForcesSystem {
             let position: &DataWrapper<Point> = positions[index].cast()?;
 
             *velocity.borrow_mut() += *acceleration.borrow();
+            velocity.borrow_mut().clamp(max_velocity, -max_velocity);
             *position.borrow_mut() += *velocity.borrow();
             acceleration.borrow_mut().multiply_scalar(0.0);
         }

@@ -19,7 +19,7 @@ impl UpdateCameraPosition {
         };
 
         camera.position.borrow_mut().x = player.position.borrow().x;
-        camera.position.borrow_mut().y = player.position.borrow().y - 415.0;
+        camera.position.borrow_mut().y = player.position.borrow().y - 200.0;
         Ok(())
     }
 }
