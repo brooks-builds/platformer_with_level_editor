@@ -19,4 +19,5 @@ pub enum ComponentNames {
     Player,
     Name,
     EntityState,
+    End,
 }

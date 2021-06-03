@@ -31,6 +31,10 @@ impl<'a> GameEntity<'a> {
         self.position.borrow().x + self.width / 2.0
     }
 
+    pub fn bottom(&self) -> f32 {
+        self.position.borrow().y + self.height / 2.0
+    }
+
     pub fn state(&self) -> Option<EntityStates> {
         Some(EntityStates::from_str(&*self.state?.borrow()))
     }
@@ -38,5 +42,12 @@ impl<'a> GameEntity<'a> {
     pub fn set_state(&mut self, new_state: EntityStates) -> Option<()> {
         *self.state?.borrow_mut() = new_state.to_string();
         Some(())
+    }
+
+    pub fn is_colliding_with(&self, other: &Self) -> bool {
+        self.right() > other.left()
+            && self.left() < other.right()
+            && self.bottom() > other.top()
+            && self.top() < other.bottom()
     }
 }

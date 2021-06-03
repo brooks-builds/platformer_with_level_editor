@@ -105,6 +105,7 @@ impl MainState {
         self.world.register(ComponentNames::Name.to_string())?;
         self.world
             .register(ComponentNames::EntityState.to_string())?;
+        self.world.register(ComponentNames::End.to_string())?;
 
         self.loader_manager
             .setup(&mut self.world, context, &self.level_manager)?;

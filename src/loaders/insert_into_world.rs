@@ -26,6 +26,7 @@ pub struct InsertIntoWorld {
     player: Option<bool>,
     name: Option<String>,
     state: Option<EntityStates>,
+    end: Option<bool>,
 }
 
 impl InsertIntoWorld {
@@ -118,6 +119,11 @@ impl InsertIntoWorld {
         self
     }
 
+    pub fn set_end(mut self) -> Self {
+        self.end = Some(true);
+        self
+    }
+
     pub fn insert(self, world: &mut World) -> Result<()> {
         world.spawn_entity()?;
 
@@ -190,6 +196,10 @@ impl InsertIntoWorld {
 
         if let Some(state) = self.state {
             world.with_component(ComponentNames::EntityState.as_ref(), state.to_string())?;
+        }
+
+        if let Some(end) = self.end {
+            world.with_component(ComponentNames::End.as_ref(), end)?;
         }
 
         Ok(())

@@ -8,6 +8,7 @@ use crate::level_manager::LevelManager;
 
 use self::apply_gravity::ApplyGravitySystem;
 use self::camera::CameraSystem;
+use self::collide_with_end::CollideWithEnd;
 use self::collide_with_platform::CollideWithPlatform;
 use self::draw_editing_level::DrawEditingLevel;
 use self::draw_selectable_text::DrawText;
@@ -20,6 +21,7 @@ use self::update_text::UpdateTextSystem;
 
 mod apply_gravity;
 mod camera;
+mod collide_with_end;
 mod collide_with_platform;
 mod draw_editing_level;
 mod draw_selectable_text;
@@ -42,6 +44,7 @@ pub struct SystemManager {
     move_player: MovePlayer,
     draw_editing_level: DrawEditingLevel,
     jump_system: JumpSystem,
+    collide_with_end: CollideWithEnd,
 }
 
 impl SystemManager {
@@ -57,6 +60,7 @@ impl SystemManager {
         let move_player = MovePlayer::new(event_manager);
         let draw_editing_level = DrawEditingLevel::new(event_manager);
         let jump_system = JumpSystem::new(event_manager);
+        let collide_with_end = CollideWithEnd::new(&event_manager);
 
         Self {
             draw_text,
@@ -70,6 +74,7 @@ impl SystemManager {
             move_player,
             draw_editing_level,
             jump_system,
+            collide_with_end,
         }
     }
 
@@ -82,6 +87,7 @@ impl SystemManager {
         self.update_camera_position.run(world)?;
         self.move_player.run(world)?;
         self.jump_system.run(world)?;
+        self.collide_with_end.run(world)?;
         Ok(())
     }
 
