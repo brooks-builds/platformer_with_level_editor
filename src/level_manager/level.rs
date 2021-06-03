@@ -17,6 +17,7 @@ impl GridCoordinate {
 pub enum Entity {
     Platform,
     Player,
+    End,
 }
 
 pub struct Level {
@@ -64,5 +65,11 @@ impl Level {
                 Entity::Platform,
             );
         }
+    }
+
+    pub fn add_end(&mut self, x: u32, y: u32) {
+        let grid_coordinate = GridCoordinate::new(x, y);
+        let entity = Entity::End;
+        self.map.insert(grid_coordinate, entity);
     }
 }

@@ -49,6 +49,15 @@ impl PlayLoader {
                         .set_state(crate::names::entity_states::EntityStates::Falling)
                         .insert(world)?;
                 }
+                Entity::End => {
+                    InsertIntoWorld::new()
+                        .set_height(level.unit_height)
+                        .set_position(level.grid_coordinate_to_point(grid_coordinate))
+                        .set_width(level.unit_width)
+                        .set_platform()
+                        .set_image_name(ImageName::End.to_string())
+                        .insert(world)?;
+                }
             }
         }
 

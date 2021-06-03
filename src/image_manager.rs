@@ -7,6 +7,7 @@ use strum_macros::{AsRefStr, ToString};
 pub enum ImageName {
     GrassMiddle,
     Player,
+    End,
 }
 
 impl ImageName {
@@ -14,6 +15,7 @@ impl ImageName {
         match string {
             "GrassMiddle" => Some(Self::GrassMiddle),
             "Player" => Some(Self::Player),
+            "End" => Some(Self::End),
             _ => None,
         }
     }
@@ -27,9 +29,11 @@ impl ImageManager {
     pub fn new(context: &mut Context) -> Result<Self> {
         let grass_middle_image = Image::new(context, "/grassMid.png")?;
         let player_image = Image::new(context, "/bunny1_ready.png")?;
+        let end_image = Image::new(context, "/end.png")?;
         let mut images = HashMap::new();
         images.insert(ImageName::GrassMiddle, grass_middle_image);
         images.insert(ImageName::Player, player_image);
+        images.insert(ImageName::End, end_image);
 
         Ok(Self { images })
     }
