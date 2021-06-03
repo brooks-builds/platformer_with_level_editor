@@ -11,10 +11,12 @@ use crate::navigation::screens::NavigationScreens;
 use crate::navigation::Navigation;
 
 use self::level_select::LevelSelectInputHandler;
+use self::play_input_handler::PlayInputHandler;
 use self::settings::SettingsInputHandler;
 use self::title_screen::TitleScreenInputHandler;
 
 mod level_select;
+mod play_input_handler;
 mod settings;
 mod title_screen;
 
@@ -32,6 +34,7 @@ pub struct InputHandler {
     level_select: LevelSelectInputHandler,
     settings: SettingsInputHandler,
     event_sender: Sender<Event>,
+    play_input_handler: PlayInputHandler,
 }
 
 impl InputHandler {
@@ -40,16 +43,19 @@ impl InputHandler {
         let title_screen = TitleScreenInputHandler::new(event_sender.clone());
         let level_select = LevelSelectInputHandler::new(event_sender.clone());
         let settings = SettingsInputHandler::new(event_sender.clone());
+        let play_input_handler = PlayInputHandler::new(event_manager);
 
         Self {
             title_screen,
             level_select,
             settings,
             event_sender,
+            play_input_handler,
         }
     }
 
     pub fn update(&mut self) -> Result<()> {
+        self.play_input_handler.update()?;
         Ok(())
     }
 
@@ -73,21 +79,9 @@ impl InputHandler {
                 .handle_controller_input(world, button, navigation)?,
             NavigationScreens::Credits => {}
             NavigationScreens::Unknown => {}
-            NavigationScreens::Play(_) => match button {
-                Button::DPadLeft => {
-                    let command = Command::StartMovingLeft;
-                    self.event_sender.send(Event::Command(command))?;
-                }
-                Button::DPadRight => {
-                    let command = Command::StartMovingRight;
-                    self.event_sender.send(Event::Command(command))?;
-                }
-                Button::South => {
-                    let command = Command::Jump;
-                    self.event_sender.send(Event::Command(command))?;
-                }
-                _ => {}
-            },
+            NavigationScreens::Play(_) => {
+                self.play_input_handler.handle_controller_input(button)?
+            }
             NavigationScreens::EditLevel => {}
         }
         Ok(())
