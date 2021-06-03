@@ -17,6 +17,7 @@ use self::play::PlayLoader;
 use self::select_level_loader::SelectLevelLoader;
 use self::settings::SettingsLoader;
 use self::title_screen_loader::TitleScreenLoader;
+use self::won_loader::WonLoader;
 
 mod edit_scene;
 mod insert_into_world;
@@ -24,6 +25,7 @@ mod play;
 mod select_level_loader;
 mod settings;
 mod title_screen_loader;
+mod won_loader;
 
 pub struct LoaderManager {
     event_receiver: Receiver<Event>,
@@ -32,19 +34,21 @@ pub struct LoaderManager {
     settings: SettingsLoader,
     play: PlayLoader,
     edit_scene: EditScene,
+    won_loader: WonLoader,
 }
 
 impl LoaderManager {
     pub fn new(event_manager: &mut EventManager) -> Self {
-        let event_receiver = event_manager
-            .subscribe(vec![
-                Event::NavigatingTo(NavigationScreens::Title).to_string()
-            ]);
+        let event_receiver = event_manager.subscribe(vec![
+            Event::NavigatingTo(NavigationScreens::Title).to_string(),
+            Event::Won.to_string(),
+        ]);
         let title_screen = TitleScreenLoader;
         let select_level = SelectLevelLoader;
         let settings = SettingsLoader;
         let play = PlayLoader;
         let edit_scene = EditScene;
+        let won_loader = WonLoader;
 
         Self {
             event_receiver,
@@ -53,6 +57,7 @@ impl LoaderManager {
             settings,
             play,
             edit_scene,
+            won_loader,
         }
     }
 
@@ -73,7 +78,7 @@ impl LoaderManager {
         level_manager: &LevelManager,
     ) -> Result<()> {
         while let Ok(event) = self.event_receiver.try_recv() {
-            if let Event::NavigatingTo(target) = event {
+            if let Event::NavigatingTo(target) = event.clone() {
                 self.clear_world(world)?;
 
                 match target {
@@ -95,6 +100,10 @@ impl LoaderManager {
                         self.edit_scene.load(world, context, level_manager)?
                     }
                 }
+            }
+
+            if let Event::Won = event {
+                self.won_loader.run(world)?;
             }
         }
         Ok(())
