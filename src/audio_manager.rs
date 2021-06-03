@@ -35,6 +35,7 @@ impl AudioManager {
                 Event::NavigatingTo(_) => self.menu_navigate.play()?,
                 Event::Command(_) => {}
                 Event::ChangeMenuItem => self.menu_select.play()?,
+                Event::Won => {}
             }
         }
         Ok(())

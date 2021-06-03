@@ -1,5 +1,5 @@
 use bbecs::world::World;
-use crossbeam::channel::{SendError, Sender};
+use crossbeam::channel::Sender;
 use eyre::Result;
 
 use crate::{
@@ -31,7 +31,8 @@ impl CollideWithEnd {
         };
 
         if player.is_colliding_with(&end) {
-            dbg!("colliding with end");
+            let event = Event::Won;
+            self.event_sender.send(event)?;
         }
         Ok(())
     }

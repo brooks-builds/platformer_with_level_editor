@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use bbecs::{
     components::CastComponents,
     query,
@@ -13,7 +11,7 @@ use super::game_entity::GameEntity;
 
 pub fn query_end(world: &World) -> Result<Option<GameEntity>> {
     let query;
-    let (heights, positions, widths, ends) = query!(
+    let (heights, positions, widths, _ends) = query!(
         world,
         query,
         ComponentNames::Height.as_ref(),

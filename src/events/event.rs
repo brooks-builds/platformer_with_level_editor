@@ -6,4 +6,5 @@ pub enum Event {
     NavigatingTo(NavigationScreens),
     Command(Command),
     ChangeMenuItem,
+    Won,
 }
