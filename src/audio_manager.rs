@@ -11,21 +11,29 @@ pub struct AudioManager {
     event_receiver: Receiver<Event>,
     menu_navigate: Source,
     menu_select: Source,
+    won: Source,
 }
 
 impl AudioManager {
     pub fn new(context: &mut Context, event_manager: &mut EventManager) -> Result<Self> {
-        let menu_select = Source::new(context, "/menu_select.mp3")?;
+        let mut menu_select = Source::new(context, "/menu_select.mp3")?;
+        menu_select.set_volume(0.08);
         let event_receiver = event_manager.subscribe(vec![
             Event::ChangeMenuItem.to_string(),
             Event::NavigatingTo(NavigationScreens::LevelSelect).to_string(),
+            Event::Won.to_string(),
         ]);
-        let menu_navigate = Source::new(context, "/menu_navigate.mp3")?;
+        let mut menu_navigate = Source::new(context, "/menu_navigate.mp3")?;
+        menu_navigate.set_volume(0.6);
+        let mut won = Source::new(context, "/win_game_sound.mp3")?;
+        won.set_volume(0.08);
+        won.set_repeat(false);
 
         Ok(Self {
             event_receiver,
             menu_navigate,
             menu_select,
+            won,
         })
     }
 
@@ -35,7 +43,7 @@ impl AudioManager {
                 Event::NavigatingTo(_) => self.menu_navigate.play()?,
                 Event::Command(_) => {}
                 Event::ChangeMenuItem => self.menu_select.play()?,
-                Event::Won => {}
+                Event::Won => self.won.play()?,
             }
         }
         Ok(())
