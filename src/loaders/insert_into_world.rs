@@ -5,7 +5,7 @@ use bbecs::{
 use eyre::Result;
 use ggez::graphics::{Text, TextFragment};
 
-use crate::names::component_names::ComponentNames;
+use crate::names::{component_names::ComponentNames, entity_states::EntityStates};
 
 #[derive(Default)]
 pub struct InsertIntoWorld {
@@ -25,6 +25,7 @@ pub struct InsertIntoWorld {
     image_name: Option<String>,
     player: Option<bool>,
     name: Option<String>,
+    state: Option<EntityStates>,
 }
 
 impl InsertIntoWorld {
@@ -112,6 +113,11 @@ impl InsertIntoWorld {
         self
     }
 
+    pub fn set_state(mut self, state: EntityStates) -> Self {
+        self.state = Some(state);
+        self
+    }
+
     pub fn insert(self, world: &mut World) -> Result<()> {
         world.spawn_entity()?;
 
@@ -180,6 +186,10 @@ impl InsertIntoWorld {
 
         if let Some(name) = self.name {
             world.with_component(ComponentNames::Name.as_ref(), name)?;
+        }
+
+        if let Some(state) = self.state {
+            world.with_component(ComponentNames::EntityState.as_ref(), state.to_string())?;
         }
 
         Ok(())

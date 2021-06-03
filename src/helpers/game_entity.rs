@@ -1,11 +1,14 @@
 use bbecs::{data_types::point::Point, world::DataWrapper};
 
+use crate::names::entity_states::EntityStates;
+
 pub struct GameEntity<'a> {
     pub width: f32,
     pub height: f32,
     pub position: &'a DataWrapper<Point>,
     pub velocity: Option<&'a DataWrapper<Point>>,
     pub acceleration: Option<&'a DataWrapper<Point>>,
+    pub state: Option<&'a DataWrapper<String>>,
 }
 
 impl<'a> GameEntity<'a> {
@@ -26,5 +29,14 @@ impl<'a> GameEntity<'a> {
 
     pub fn right(&self) -> f32 {
         self.position.borrow().x + self.width / 2.0
+    }
+
+    pub fn state(&self) -> Option<EntityStates> {
+        Some(EntityStates::from_str(&*self.state?.borrow()))
+    }
+
+    pub fn set_state(&mut self, new_state: EntityStates) -> Option<()> {
+        *self.state?.borrow_mut() = new_state.to_string();
+        Some(())
     }
 }

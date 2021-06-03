@@ -46,6 +46,7 @@ impl PlayLoader {
                         .set_width(70.0)
                         .set_image_name(ImageName::Player.to_string())
                         .set_player()
+                        .set_state(crate::names::entity_states::EntityStates::Falling)
                         .insert(world)?;
                 }
             }

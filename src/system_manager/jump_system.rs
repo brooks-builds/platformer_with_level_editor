@@ -6,7 +6,7 @@ use crate::{
     command::Command,
     events::{event::Event, EventManager},
     helpers::{self, get_resource::get_f32},
-    names::resource_names::ResourceNames,
+    names::{entity_states::EntityStates, resource_names::ResourceNames},
 };
 
 pub struct JumpSystem {
@@ -25,23 +25,19 @@ impl JumpSystem {
         if !self.did_jump()? {
             return Ok(());
         }
-        let player = if let Some(player) = helpers::query_player::query_player(world)? {
+        let mut player = if let Some(player) = helpers::query_player::query_player(world)? {
             player
         } else {
             return Ok(());
         };
-        let player_velocity_y = player.velocity.unwrap().borrow().y;
-        dbg!(
-            player_velocity_y,
-            "use a flag on the player entity to know if we are standing on a platform"
-        );
-        if player_velocity_y < 0.1 || player_velocity_y > -0.1 {
+        if player.state().unwrap() != EntityStates::Standing {
             return Ok(());
         }
 
         let jump_force = Point::new(0.0, -get_f32(world, ResourceNames::JumpForce.as_ref()));
 
         *player.acceleration.unwrap().borrow_mut() += jump_force;
+        player.set_state(EntityStates::Falling);
         Ok(())
     }
 

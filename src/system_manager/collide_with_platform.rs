@@ -1,33 +1,40 @@
 use bbecs::{data_types::point::Point, world::World};
 use eyre::Result;
 
-use crate::helpers::{
-    game_entity::GameEntity, query_platforms::query_platforms, query_player::query_player,
+use crate::{
+    helpers::{
+        game_entity::GameEntity, query_platforms::query_platforms, query_player::query_player,
+    },
+    names::entity_states::EntityStates,
 };
 
 pub struct CollideWithPlatform;
 
 impl CollideWithPlatform {
     pub fn run(&self, world: &World) -> Result<()> {
-        let player = if let Some(player) = query_player(world)? {
+        let mut player = if let Some(player) = query_player(world)? {
             player
         } else {
             return Ok(());
         };
+        if player.state().unwrap() != EntityStates::Falling {
+            return Ok(());
+        }
         let platforms = query_platforms(world)?;
 
         for platform in platforms {
             if self.is_colliding(&platform, &*player.position.borrow(), &player) {
                 if self.was_player_above(&platform, &player) {
                     player.velocity.unwrap().borrow_mut().y = 0.0;
-                    player.position.borrow_mut().y = platform.top() - player.height / 2.0 - 1.0;
+                    player.position.borrow_mut().y = platform.top() - player.height / 2.0;
+                    player.set_state(EntityStates::Standing);
                 }
                 if self.was_player_left(&platform, &player) {
                     player.velocity.unwrap().borrow_mut().x = 0.0;
-                    player.position.borrow_mut().x = platform.left() - player.width / 2.0 - 1.0;
+                    player.position.borrow_mut().x = platform.left() - player.width / 2.0 - 0.1;
                 } else if self.was_player_right(&platform, &player) {
                     player.velocity.unwrap().borrow_mut().x = 0.0;
-                    player.position.borrow_mut().x = platform.right() + player.width / 2.0 + 1.0;
+                    player.position.borrow_mut().x = platform.right() + player.width / 2.0 + 0.1;
                 }
             }
         }

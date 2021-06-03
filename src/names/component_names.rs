@@ -18,4 +18,5 @@ pub enum ComponentNames {
     ImageName,
     Player,
     Name,
+    EntityState,
 }

@@ -10,7 +10,7 @@ use crate::{helpers::game_entity::GameEntity, names::component_names::ComponentN
 
 pub fn query_player(world: &World) -> Result<Option<GameEntity>> {
     let query;
-    let (widths, heights, positions, players, velocities, accelerations) = query!(
+    let (widths, heights, positions, players, velocities, accelerations, states) = query!(
         world,
         query,
         ComponentNames::Width.as_ref(),
@@ -18,7 +18,8 @@ pub fn query_player(world: &World) -> Result<Option<GameEntity>> {
         ComponentNames::Position.as_ref(),
         ComponentNames::Player.as_ref(),
         ComponentNames::Velocity.as_ref(),
-        ComponentNames::Acceleration.as_ref()
+        ComponentNames::Acceleration.as_ref(),
+        ComponentNames::EntityState.as_ref()
     );
 
     if players.is_empty() {
@@ -32,6 +33,7 @@ pub fn query_player(world: &World) -> Result<Option<GameEntity>> {
     let position: &DataWrapper<Point> = positions[0].cast()?;
     let velocity: &DataWrapper<Point> = velocities[0].cast()?;
     let acceleration: &DataWrapper<Point> = accelerations[0].cast()?;
+    let wrapped_state: &DataWrapper<String> = states[0].cast()?;
 
     if widths.is_empty() {
         Ok(None)
@@ -42,6 +44,7 @@ pub fn query_player(world: &World) -> Result<Option<GameEntity>> {
             position,
             velocity: Some(velocity),
             acceleration: Some(acceleration),
+            state: Some(wrapped_state),
         }))
     }
 }

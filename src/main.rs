@@ -6,7 +6,7 @@ use platformer_with_level_editor::MainState;
 const GAME_NAME: &str = "Name_of_Game";
 
 fn main() -> Result<()> {
-    let window_setup = WindowSetup::default().title(GAME_NAME).vsync(false);
+    let window_setup = WindowSetup::default().title(GAME_NAME).vsync(true);
     let window_mode = WindowMode::default()
         .dimensions(1920.0, 1080.0)
         .fullscreen_type(ggez::conf::FullscreenType::Windowed)

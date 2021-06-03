@@ -37,6 +37,7 @@ pub fn query_camera(world: &World) -> Result<Option<GameEntity>> {
         position: wrapped_position,
         velocity,
         acceleration,
+        state: None,
     };
     Ok(Some(game_entity))
 }
