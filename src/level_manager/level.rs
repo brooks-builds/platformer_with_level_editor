@@ -34,7 +34,7 @@ impl Level {
     pub fn new(name: String) -> Self {
         let start = GridCoordinate::new(2, 0);
         let width = 100;
-        let height = 15;
+        let height = 5;
         let unit_width = 70.0;
         let unit_height = 70.0;
         let mut map = HashMap::new();

@@ -8,6 +8,7 @@ pub enum ImageName {
     GrassMiddle,
     Player,
     End,
+    Won,
 }
 
 impl ImageName {
@@ -16,6 +17,7 @@ impl ImageName {
             "GrassMiddle" => Some(Self::GrassMiddle),
             "Player" => Some(Self::Player),
             "End" => Some(Self::End),
+            "Won" => Some(Self::Won),
             _ => None,
         }
     }
@@ -30,10 +32,12 @@ impl ImageManager {
         let grass_middle_image = Image::new(context, "/grassMid.png")?;
         let player_image = Image::new(context, "/bunny1_ready.png")?;
         let end_image = Image::new(context, "/end.png")?;
+        let won_image = Image::new(context, "/win.png")?;
         let mut images = HashMap::new();
         images.insert(ImageName::GrassMiddle, grass_middle_image);
         images.insert(ImageName::Player, player_image);
         images.insert(ImageName::End, end_image);
+        images.insert(ImageName::Won, won_image);
 
         Ok(Self { images })
     }

@@ -12,7 +12,7 @@ impl LevelManager {
     pub fn new() -> Self {
         let mut level = Level::new("Introduction".into());
         level.add_floor();
-        level.add_end(4, 13);
+        level.add_end(4, 3);
         let level2 = Level::new("No Floor".into());
         let mut levels = HashMap::new();
         levels.insert(level.name.clone(), level);
