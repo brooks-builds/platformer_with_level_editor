@@ -19,20 +19,20 @@ use crate::{
 
 pub struct DrawEditingLevel {
     event_receiver: Receiver<Event>,
-    is_editing: bool,
+    level_name: Option<String>,
 }
 
 impl DrawEditingLevel {
     pub fn new(event_manager: &mut EventManager) -> Self {
-        let event_receiver = event_manager
-            .subscribe(vec![
-                Event::NavigatingTo(NavigationScreens::EditLevel).to_string()
-            ]);
-        let is_editing = false;
+        let event_receiver = event_manager.subscribe(vec![Event::NavigatingTo(
+            NavigationScreens::EditLevel("".to_string()),
+        )
+        .to_string()]);
+        let level_name = None;
 
         Self {
             event_receiver,
-            is_editing,
+            level_name,
         }
     }
 
@@ -42,49 +42,51 @@ impl DrawEditingLevel {
         level_manager: &LevelManager,
         world: &World,
     ) -> Result<()> {
-        self.update_is_editing()?;
-        if !self.is_editing {
-            return Ok(());
-        }
+        // self.update_is_editing()?;
+        // if !self.is_editing {
+        //     return Ok(());
+        // }
 
-        let level_name = if let Some(name) = self.get_current_level_name(world)? {
-            name
-        } else {
-            return Ok(());
-        };
+        // let level_name = if let Some(name) = self.get_current_level_name(world)? {
+        //     name
+        // } else {
+        //     return Ok(());
+        // };
 
-        let level = level_manager.get_level(&level_name).unwrap();
+        // let level = level_manager.get_level(&level_name).unwrap();
 
-        let cell_size = self.calculate_cell_size(level, context);
-        let mut mesh_builder = MeshBuilder::new();
-        let line_height = level.height as f32 * cell_size;
+        // let cell_size = self.calculate_cell_size(level, context);
+        // let mut mesh_builder = MeshBuilder::new();
+        // let line_height = level.height as f32 * cell_size;
 
-        for count in 0..level.width {
-            let start = ggez::mint::Point2 {
-                x: count as f32 * cell_size,
-                y: 0.0,
-            };
-            let end = ggez::mint::Point2 {
-                x: start.x,
-                y: start.y + line_height,
-            };
-            mesh_builder.line(&[start, end], 1.0, WHITE)?;
-        }
+        // for count in 0..level.width {
+        //     let start = ggez::mint::Point2 {
+        //         x: count as f32 * cell_size,
+        //         y: 0.0,
+        //     };
+        //     let end = ggez::mint::Point2 {
+        //         x: start.x,
+        //         y: start.y + line_height,
+        //     };
+        //     mesh_builder.line(&[start, end], 1.0, WHITE)?;
+        // }
 
-        let mesh = mesh_builder.build(context)?;
-        graphics::draw(context, &mesh, DrawParam::new())?;
+        // let mesh = mesh_builder.build(context)?;
+        // graphics::draw(context, &mesh, DrawParam::new())?;
 
         Ok(())
     }
 
     fn update_is_editing(&mut self) -> Result<()> {
-        if let Ok(event) = self.event_receiver.try_recv() {
-            match event {
-                Event::NavigatingTo(NavigationScreens::EditLevel) => self.is_editing = true,
-                Event::NavigatingTo(NavigationScreens::Play(_)) => self.is_editing = false,
-                _ => {}
-            }
-        }
+        // if let Ok(event) = self.event_receiver.try_recv() {
+        //     match event {
+        //         Event::NavigatingTo(NavigationScreens::EditLevel(level_name)) => {
+        //             self.is_editing = true
+        //         }
+        //         Event::NavigatingTo(NavigationScreens::Play(_)) => self.is_editing = false,
+        //         _ => {}
+        //     }
+        // }
         Ok(())
     }
 

@@ -8,5 +8,5 @@ pub enum NavigationScreens {
     Credits,
     Unknown,
     Play(String),
-    EditLevel,
+    EditLevel(String),
 }

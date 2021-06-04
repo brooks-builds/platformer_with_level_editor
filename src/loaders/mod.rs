@@ -96,8 +96,9 @@ impl LoaderManager {
                     NavigationScreens::Play(level_name) => {
                         self.play.load(world, level_manager, level_name)?
                     }
-                    NavigationScreens::EditLevel => {
-                        self.edit_scene.load(world, context, level_manager)?
+                    NavigationScreens::EditLevel(level_name) => {
+                        self.edit_scene
+                            .load(world, context, level_manager, &level_name)?
                     }
                 }
             }

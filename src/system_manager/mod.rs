@@ -106,7 +106,7 @@ impl SystemManager {
     ) -> Result<()> {
         self.draw_text.run(world, context)?;
         self.draw_entities.run(world, context, image_manager)?;
-        self.draw_editing_level.run(context, level_manager, world)?;
+        // self.draw_editing_level.run(context, level_manager, world)?;
 
         Ok(())
     }

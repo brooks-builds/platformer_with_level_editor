@@ -10,11 +10,13 @@ use crate::events::EventManager;
 use crate::navigation::screens::NavigationScreens;
 use crate::navigation::Navigation;
 
+use self::edit_level_input_handler::EditLevelInputHandler;
 use self::level_select::LevelSelectInputHandler;
 use self::play_input_handler::PlayInputHandler;
 use self::settings::SettingsInputHandler;
 use self::title_screen::TitleScreenInputHandler;
 
+mod edit_level_input_handler;
 mod level_select;
 mod play_input_handler;
 mod settings;
@@ -35,6 +37,7 @@ pub struct InputHandler {
     settings: SettingsInputHandler,
     event_sender: Sender<Event>,
     play_input_handler: PlayInputHandler,
+    edit_level_input_handler: EditLevelInputHandler,
 }
 
 impl InputHandler {
@@ -44,6 +47,7 @@ impl InputHandler {
         let level_select = LevelSelectInputHandler::new(event_sender.clone());
         let settings = SettingsInputHandler::new(event_sender.clone());
         let play_input_handler = PlayInputHandler::new(event_manager);
+        let edit_level_input_handler = EditLevelInputHandler::new(event_manager);
 
         Self {
             title_screen,
@@ -51,11 +55,13 @@ impl InputHandler {
             settings,
             event_sender,
             play_input_handler,
+            edit_level_input_handler,
         }
     }
 
     pub fn update(&mut self) -> Result<()> {
         self.play_input_handler.update()?;
+        self.edit_level_input_handler.update()?;
         Ok(())
     }
 
@@ -82,7 +88,7 @@ impl InputHandler {
             NavigationScreens::Play(_) => {
                 self.play_input_handler.handle_controller_input(button)?
             }
-            NavigationScreens::EditLevel => {}
+            NavigationScreens::EditLevel(_) => {}
         }
         Ok(())
     }
@@ -109,7 +115,7 @@ impl InputHandler {
                 }
                 _ => {}
             },
-            NavigationScreens::EditLevel => todo!(),
+            NavigationScreens::EditLevel(_) => todo!(),
         }
         Ok(())
     }
@@ -125,16 +131,15 @@ impl InputHandler {
             NavigationScreens::Settings => {}
             NavigationScreens::Credits => {}
             NavigationScreens::Unknown => {}
-            NavigationScreens::Play(_level_name) => {
-                let event = Event::NavigatingTo(NavigationScreens::EditLevel);
-                self.event_sender.send(event)?;
-            }
-            NavigationScreens::EditLevel => {
-                let event = Event::NavigatingTo(NavigationScreens::Play("".to_string()));
-                if let KeyCode::P = keycode {
+            NavigationScreens::Play(level_name) => {
+                if let KeyCode::E = keycode {
+                    let event = Event::NavigatingTo(NavigationScreens::EditLevel(level_name));
                     self.event_sender.send(event)?;
                 }
             }
+            NavigationScreens::EditLevel(_level_name) => self
+                .edit_level_input_handler
+                .handle_keyboard_input(keycode)?,
         }
         Ok(())
     }

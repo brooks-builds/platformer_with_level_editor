@@ -10,10 +10,10 @@ pub struct LevelManager {
 
 impl LevelManager {
     pub fn new() -> Self {
-        let mut level = Level::new("Introduction".into());
+        let mut level = Level::new("Introduction".into(), 10, 10);
         level.add_floor();
         level.add_end(25, 3);
-        let level2 = Level::new("No Floor".into());
+        let level2 = Level::new("No Floor".into(), 10, 30);
         let mut levels = HashMap::new();
         levels.insert(level.name.clone(), level);
         levels.insert(level2.name.clone(), level2);

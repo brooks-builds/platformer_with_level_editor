@@ -11,10 +11,12 @@ impl EditScene {
         world: &mut bbecs::world::World,
         _context: &mut ggez::Context,
         _level_manager: &crate::level_manager::LevelManager,
+        level_name: &str,
     ) -> eyre::Result<()> {
+        let title = format!("Edit Mode for {}", level_name);
         InsertIntoWorld::new()
             .set_position(Point::new(0.0, 0.0))
-            .set_text(Text::new("Edit Mode"))
+            .set_text(Text::new(title))
             .insert(world)
     }
 }
