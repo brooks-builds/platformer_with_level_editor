@@ -80,6 +80,7 @@ impl LoaderManager {
         while let Ok(event) = self.event_receiver.try_recv() {
             if let Event::NavigatingTo(target) = event.clone() {
                 self.clear_world(world)?;
+                dbg!(&target);
 
                 match target {
                     NavigationScreens::Title => {

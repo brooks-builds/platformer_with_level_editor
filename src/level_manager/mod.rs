@@ -21,7 +21,7 @@ impl LevelManager {
     pub fn new(event_manager: &mut EventManager) -> Self {
         let mut level = Level::new("Introduction".into(), 50, 10);
         level.add_floor();
-        level.add_end(25, 3);
+        level.add_end(4, 8);
         let level2 = Level::new("No Floor".into(), 10, 30);
         let mut levels = HashMap::new();
         levels.insert(level.name.clone(), level);

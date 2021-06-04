@@ -34,6 +34,7 @@ mod move_player;
 mod update_camera_position;
 mod update_forces;
 mod update_selected;
+mod update_state_system;
 mod update_text;
 
 pub struct SystemManager {

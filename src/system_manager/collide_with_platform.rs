@@ -17,9 +17,6 @@ impl CollideWithPlatform {
         } else {
             return Ok(());
         };
-        if player.state().unwrap() != EntityStates::Falling {
-            return Ok(());
-        }
         let platforms = query_platforms(world)?;
 
         for platform in platforms {
@@ -30,12 +27,16 @@ impl CollideWithPlatform {
                     player.set_state(EntityStates::Standing);
                 }
                 if self.was_player_left(&platform, &player) {
+                    dbg!("colliding right");
                     player.velocity.unwrap().borrow_mut().x = 0.0;
-                    player.position.borrow_mut().x = platform.left() - player.width / 2.0 - 0.1;
+                    player.position.borrow_mut().x = platform.left() - player.width / 2.0 - 1.0;
                 } else if self.was_player_right(&platform, &player) {
+                    dbg!("colliding left");
                     player.velocity.unwrap().borrow_mut().x = 0.0;
-                    player.position.borrow_mut().x = platform.right() + player.width / 2.0 + 0.1;
+                    player.position.borrow_mut().x = platform.right() + player.width / 2.0 + 1.0;
                 }
+            } else {
+                player.set_state(EntityStates::Falling);
             }
         }
 
@@ -57,15 +58,10 @@ impl CollideWithPlatform {
         let player_top = player_position.y - player.height / 2.0;
         let platform_bottom = platform.position.borrow().y + platform.height / 2.0;
 
-        if player_right > platform_left
-            && player_left < platform_right
-            && player_bottom > platform_top
+        player_bottom > platform_top
             && player_top < platform_bottom
-        {
-            return true;
-        }
-
-        false
+            && player_left < platform_right
+            && player_right > platform_left
     }
 
     fn was_player_above(&self, platform: &GameEntity, player: &GameEntity) -> bool {
