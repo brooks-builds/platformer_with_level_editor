@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use bbecs::data_types::point::Point;
 
-#[derive(Debug, Eq, PartialEq, Hash, Clone)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone, Default)]
 pub struct GridCoordinate {
     pub x: u32,
     pub y: u32,

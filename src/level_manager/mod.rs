@@ -26,12 +26,15 @@ impl LevelManager {
         let mut levels = HashMap::new();
         levels.insert(level.name.clone(), level);
         levels.insert(level2.name.clone(), level2);
-        let event_receiver = event_manager.subscribe(vec![Event::InsertIntoLevel(
-            GridCoordinate { x: 0, y: 0 },
-            level::Entity::Platform,
-            "".to_string(),
-        )
-        .to_string()]);
+        let event_receiver = event_manager.subscribe(vec![
+            Event::InsertIntoLevel(
+                GridCoordinate::default(),
+                level::Entity::Platform,
+                "".to_string(),
+            )
+            .to_string(),
+            Event::RemoveFromLevel(GridCoordinate::default(), String::new()).to_string(),
+        ]);
 
         Self {
             levels,
@@ -48,11 +51,18 @@ impl LevelManager {
     }
 
     pub fn update(&mut self) -> Result<()> {
-        if let Ok(Event::InsertIntoLevel(grid_coordinate, entity, level_name)) =
-            self.event_receiver.try_recv()
-        {
-            let level = self.levels.get_mut(&level_name).unwrap();
-            level.map.insert(grid_coordinate, entity);
+        match self.event_receiver.try_recv() {
+            Ok(Event::InsertIntoLevel(grid_coordinate, entity, level_name)) => {
+                let level = self.levels.get_mut(&level_name).unwrap();
+                dbg!("inserting");
+                level.map.insert(grid_coordinate, entity);
+            }
+            Ok(Event::RemoveFromLevel(grid_coordinate, level_name)) => {
+                dbg!("removing");
+                let level = self.levels.get_mut(&level_name).unwrap();
+                level.map.remove(&grid_coordinate);
+            }
+            _ => {}
         }
         Ok(())
     }

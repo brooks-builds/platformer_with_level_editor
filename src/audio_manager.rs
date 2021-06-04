@@ -41,11 +41,9 @@ impl AudioManager {
         while let Ok(event) = self.event_receiver.try_recv() {
             match event {
                 Event::NavigatingTo(_) => self.menu_navigate.play()?,
-                Event::Command(_) => {}
                 Event::ChangeMenuItem => self.menu_select.play()?,
                 Event::Won => self.won.play()?,
-                Event::MouseClicked(_) => {}
-                Event::InsertIntoLevel(_, _, _) => {}
+                _ => {}
             }
         }
         Ok(())

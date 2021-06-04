@@ -55,7 +55,6 @@ impl EditLevelInputHandler {
     pub fn handle_mouse_input(&mut self, mouse_button: MouseButton, x: f32, y: f32) -> Result<()> {
         if mouse_button == MouseButton::Left {
             let location = Point::new(x, y);
-            dbg!("sending mouse input event", &location);
             let event = Event::MouseClicked(location);
             self.event_sender.send(event)?;
         }

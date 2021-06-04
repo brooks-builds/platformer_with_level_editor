@@ -55,10 +55,16 @@ impl EditingLevelSystem {
         let level = level_manager.get_level(&level_name).unwrap();
         let grid_coordinate =
             self.convert_position_to_grid_coordinate(clicked_position, level, context);
-        let entity = Entity::Platform;
+        if level.map.get(&grid_coordinate).is_none() {
+            let entity = Entity::Platform;
+            self.event_sender
+                .send(Event::InsertIntoLevel(grid_coordinate, entity, level_name))?;
+        } else {
+            self.event_sender
+                .send(Event::RemoveFromLevel(grid_coordinate, level_name))?;
+        }
 
-        self.event_sender
-            .send(Event::InsertIntoLevel(grid_coordinate, entity, level_name))?;
+        self.mouse_position = None;
 
         Ok(())
     }

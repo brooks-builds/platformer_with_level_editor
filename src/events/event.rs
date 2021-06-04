@@ -14,4 +14,5 @@ pub enum Event {
     Won,
     MouseClicked(Point),
     InsertIntoLevel(GridCoordinate, Entity, String),
+    RemoveFromLevel(GridCoordinate, String),
 }
