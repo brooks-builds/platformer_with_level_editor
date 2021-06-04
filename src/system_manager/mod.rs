@@ -13,6 +13,7 @@ use self::collide_with_end::CollideWithEnd;
 use self::collide_with_platform::CollideWithPlatform;
 use self::draw_editing_level::DrawEditingLevel;
 use self::draw_selectable_text::DrawText;
+use self::editing_level_system::EditingLevelSystem;
 use self::jump_system::JumpSystem;
 use self::move_player::MovePlayer;
 use self::update_camera_position::UpdateCameraPosition;
@@ -27,6 +28,7 @@ mod collide_with_end;
 mod collide_with_platform;
 mod draw_editing_level;
 mod draw_selectable_text;
+mod editing_level_system;
 mod jump_system;
 mod move_player;
 mod update_camera_position;
@@ -48,6 +50,7 @@ pub struct SystemManager {
     jump_system: JumpSystem,
     collide_with_end: CollideWithEnd,
     apply_friction_system: ApplyFrictionSystem,
+    editing_level_system: EditingLevelSystem,
 }
 
 impl SystemManager {
@@ -65,6 +68,7 @@ impl SystemManager {
         let jump_system = JumpSystem::new(event_manager);
         let collide_with_end = CollideWithEnd::new(&event_manager);
         let apply_friction_system = ApplyFrictionSystem;
+        let editing_level_system = EditingLevelSystem::new(event_manager);
 
         Self {
             draw_text,
@@ -80,10 +84,16 @@ impl SystemManager {
             jump_system,
             collide_with_end,
             apply_friction_system,
+            editing_level_system,
         }
     }
 
-    pub fn update(&mut self, world: &World, context: &mut Context) -> Result<()> {
+    pub fn update(
+        &mut self,
+        world: &World,
+        context: &mut Context,
+        level_manager: &LevelManager,
+    ) -> Result<()> {
         self.update_text.run(world, context)?;
         self.update_selected.run(world)?;
         self.apply_gravity.run(world)?;
@@ -95,6 +105,7 @@ impl SystemManager {
         self.collide_with_end.run(world)?;
         self.apply_friction_system.run(world)?;
         self.draw_editing_level.update()?;
+        self.editing_level_system.run(level_manager, context)?;
         Ok(())
     }
 

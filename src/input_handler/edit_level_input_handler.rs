@@ -1,6 +1,7 @@
+use bbecs::data_types::point::Point;
 use crossbeam::channel::{Receiver, Sender};
 use eyre::{bail, Result};
-use ggez::event::KeyCode;
+use ggez::event::{KeyCode, MouseButton};
 
 use crate::{
     events::{event::Event, EventManager},
@@ -16,10 +17,10 @@ pub struct EditLevelInputHandler {
 impl EditLevelInputHandler {
     pub fn new(event_manager: &mut EventManager) -> Self {
         let level_name = None;
-        let event_receiver = event_manager.subscribe(vec![Event::NavigatingTo(
-            NavigationScreens::EditLevel("".to_owned()),
-        )
-        .to_string()]);
+        let event_receiver = event_manager.subscribe(vec![
+            Event::NavigatingTo(NavigationScreens::EditLevel("".to_owned())).to_string(),
+            Event::MouseClicked(Point::new(0.0, 0.0)).to_string(),
+        ]);
         let event_sender = event_manager.register();
 
         Self {
@@ -48,6 +49,16 @@ impl EditLevelInputHandler {
             }
         }
 
+        Ok(())
+    }
+
+    pub fn handle_mouse_input(&mut self, mouse_button: MouseButton, x: f32, y: f32) -> Result<()> {
+        if mouse_button == MouseButton::Left {
+            let location = Point::new(x, y);
+            dbg!("sending mouse input event", &location);
+            let event = Event::MouseClicked(location);
+            self.event_sender.send(event)?;
+        }
         Ok(())
     }
 }

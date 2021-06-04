@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use bbecs::data_types::point::Point;
 
-#[derive(Debug, Eq, PartialEq, Hash)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone)]
 pub struct GridCoordinate {
     pub x: u32,
     pub y: u32,
@@ -14,7 +14,7 @@ impl GridCoordinate {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Entity {
     Platform,
     Player,

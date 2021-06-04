@@ -3,7 +3,7 @@ use bbecs::data_types::point::Point;
 use bbecs::world::{World, WorldMethods};
 use events::EventManager;
 use eyre::Result;
-use ggez::event::{Button, EventHandler, GamepadId, KeyCode, KeyMods};
+use ggez::event::{Button, EventHandler, GamepadId, KeyCode, KeyMods, MouseButton};
 use ggez::graphics::BLACK;
 use ggez::{graphics, timer, Context};
 use image_manager::ImageManager;
@@ -48,7 +48,7 @@ impl MainState {
         let input_handler = InputHandler::new(&mut event_manager);
         let audio_manager = AudioManager::new(context, &mut event_manager)?;
         let navigation = Navigation::new(&mut event_manager);
-        let level_manager = LevelManager::new();
+        let level_manager = LevelManager::new(&mut event_manager);
         let image_manager = ImageManager::new(context)?;
 
         Ok(Self {
@@ -125,10 +125,13 @@ impl EventHandler for MainState {
                 .update(&mut self.world, context, &self.level_manager)
                 .unwrap();
             self.input_handler.update().unwrap();
-            self.system_manager.update(&self.world, context).unwrap();
+            self.system_manager
+                .update(&self.world, context, &self.level_manager)
+                .unwrap();
             self.audio_manager.run().unwrap();
             self.navigation.update().unwrap();
             self.world.update().unwrap();
+            self.level_manager.update().unwrap();
         }
 
         if timer::ticks(context) % 500 == 0 {
@@ -178,6 +181,18 @@ impl EventHandler for MainState {
     ) {
         self.input_handler
             .handle_keyboard_input(keycode, &mut self.navigation)
+            .unwrap();
+    }
+
+    fn mouse_button_down_event(
+        &mut self,
+        _ctx: &mut Context,
+        mouse_button: MouseButton,
+        x: f32,
+        y: f32,
+    ) {
+        self.input_handler
+            .handle_mouse_input(x, y, mouse_button, &mut self.navigation)
             .unwrap();
     }
 }

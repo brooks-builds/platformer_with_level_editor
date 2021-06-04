@@ -3,6 +3,7 @@ use crossbeam::channel::Sender;
 use eyre::Result;
 use ggez::event::Button;
 use ggez::event::KeyCode;
+use ggez::event::MouseButton;
 
 use crate::command::Command;
 use crate::events::event::Event;
@@ -141,6 +142,29 @@ impl InputHandler {
                 .edit_level_input_handler
                 .handle_keyboard_input(keycode)?,
         }
+        Ok(())
+    }
+
+    pub fn handle_mouse_input(
+        &mut self,
+        x: f32,
+        y: f32,
+        mouse_button: MouseButton,
+        navigation: &mut Navigation,
+    ) -> Result<()> {
+        match navigation.get_current_screen() {
+            NavigationScreens::Title => {}
+            NavigationScreens::LevelSelect => {}
+            NavigationScreens::Settings => {}
+            NavigationScreens::Credits => {}
+            NavigationScreens::Unknown => {}
+            NavigationScreens::Play(_) => {}
+            NavigationScreens::EditLevel(_) => {
+                self.edit_level_input_handler
+                    .handle_mouse_input(mouse_button, x, y)?
+            }
+        }
+
         Ok(())
     }
 }

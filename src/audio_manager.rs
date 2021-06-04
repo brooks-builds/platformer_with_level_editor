@@ -44,6 +44,8 @@ impl AudioManager {
                 Event::Command(_) => {}
                 Event::ChangeMenuItem => self.menu_select.play()?,
                 Event::Won => self.won.play()?,
+                Event::MouseClicked(_) => {}
+                Event::InsertIntoLevel(_, _, _) => {}
             }
         }
         Ok(())
