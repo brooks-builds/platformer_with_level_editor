@@ -14,6 +14,7 @@ impl GridCoordinate {
     }
 }
 
+#[derive(Debug)]
 pub enum Entity {
     Platform,
     Player,

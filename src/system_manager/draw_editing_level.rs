@@ -2,13 +2,16 @@ use bbecs::{data_types::point::Point, world::World};
 use crossbeam::channel::Receiver;
 use eyre::Result;
 use ggez::{
-    graphics::{self, DrawParam, MeshBuilder, WHITE},
+    graphics::{self, Color, DrawMode, DrawParam, MeshBuilder, Rect, WHITE},
     Context,
 };
 
 use crate::{
     events::{event::Event, EventManager},
-    level_manager::{level::Level, LevelManager},
+    level_manager::{
+        level::{Entity, Level},
+        LevelManager,
+    },
     navigation::screens::NavigationScreens,
 };
 
@@ -61,8 +64,35 @@ impl DrawEditingLevel {
 
         let level = level_manager.get_level(level_name).unwrap();
         let cell_size = self.calculate_cell_size(level, context);
-
         let mut mesh_builder = MeshBuilder::new();
+
+        self.draw_grid(&mut mesh_builder, level, cell_size)?;
+        self.draw_level(level, &mut mesh_builder, cell_size);
+
+        let mesh = mesh_builder.build(context)?;
+        graphics::draw(context, &mesh, DrawParam::new())?;
+
+        Ok(())
+    }
+
+    fn calculate_cell_size(&self, level: &Level, context: &mut Context) -> f32 {
+        let screen_coordinates = graphics::screen_coordinates(context);
+        let width = screen_coordinates.w / level.width as f32;
+        let height = screen_coordinates.h / level.height as f32;
+
+        if width < height {
+            width
+        } else {
+            height
+        }
+    }
+
+    fn draw_grid(
+        &self,
+        mesh_builder: &mut MeshBuilder,
+        level: &Level,
+        cell_size: f32,
+    ) -> Result<()> {
         let line_height = level.height as f32 * cell_size;
         let line_width = level.width as f32 * cell_size;
 
@@ -85,21 +115,25 @@ impl DrawEditingLevel {
             mesh_builder.line(&[start.to_array(), end.to_array()], 1.0, WHITE)?;
         }
 
-        let mesh = mesh_builder.build(context)?;
-        graphics::draw(context, &mesh, DrawParam::new())?;
-
         Ok(())
     }
 
-    fn calculate_cell_size(&self, level: &Level, context: &mut Context) -> f32 {
-        let screen_coordinates = graphics::screen_coordinates(context);
-        let width = screen_coordinates.w / level.width as f32;
-        let height = screen_coordinates.h / level.height as f32;
+    fn draw_level(&self, level: &Level, mesh_builder: &mut MeshBuilder, cell_size: f32) {
+        for (grid_coordinate, entity) in &level.map {
+            let x = grid_coordinate.x as f32 * cell_size;
+            let y = grid_coordinate.y as f32 * cell_size;
+            let rect = Rect::new(x, y, cell_size, cell_size);
+            let color = self.create_entity_color(entity);
 
-        if width < height {
-            width
-        } else {
-            height
+            mesh_builder.rectangle(DrawMode::fill(), rect, color);
+        }
+    }
+
+    fn create_entity_color(&self, entity: &Entity) -> Color {
+        match entity {
+            Entity::Platform => Color::new(0.0, 0.4, 0.0, 1.0),
+            Entity::Player => Color::new(0.0, 0.0, 0.8, 1.0),
+            Entity::End => Color::new(0.4, 0.4, 0.4, 1.0),
         }
     }
 }
