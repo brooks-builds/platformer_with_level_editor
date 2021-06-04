@@ -1,8 +1,4 @@
-use bbecs::{
-    components::CastComponents,
-    query,
-    world::{DataWrapper, World},
-};
+use bbecs::{data_types::point::Point, world::World};
 use crossbeam::channel::Receiver;
 use eyre::Result;
 use ggez::{
@@ -13,7 +9,6 @@ use ggez::{
 use crate::{
     events::{event::Event, EventManager},
     level_manager::{level::Level, LevelManager},
-    names::component_names::ComponentNames,
     navigation::screens::NavigationScreens,
 };
 
@@ -36,57 +31,63 @@ impl DrawEditingLevel {
         }
     }
 
-    pub fn run(
-        &mut self,
-        context: &mut Context,
-        level_manager: &LevelManager,
-        world: &World,
-    ) -> Result<()> {
-        // self.update_is_editing()?;
-        // if !self.is_editing {
-        //     return Ok(());
-        // }
-
-        // let level_name = if let Some(name) = self.get_current_level_name(world)? {
-        //     name
-        // } else {
-        //     return Ok(());
-        // };
-
-        // let level = level_manager.get_level(&level_name).unwrap();
-
-        // let cell_size = self.calculate_cell_size(level, context);
-        // let mut mesh_builder = MeshBuilder::new();
-        // let line_height = level.height as f32 * cell_size;
-
-        // for count in 0..level.width {
-        //     let start = ggez::mint::Point2 {
-        //         x: count as f32 * cell_size,
-        //         y: 0.0,
-        //     };
-        //     let end = ggez::mint::Point2 {
-        //         x: start.x,
-        //         y: start.y + line_height,
-        //     };
-        //     mesh_builder.line(&[start, end], 1.0, WHITE)?;
-        // }
-
-        // let mesh = mesh_builder.build(context)?;
-        // graphics::draw(context, &mesh, DrawParam::new())?;
+    pub fn update(&mut self) -> Result<()> {
+        match self.event_receiver.try_recv() {
+            Ok(Event::NavigatingTo(NavigationScreens::EditLevel(level_name))) => {
+                self.level_name = Some(level_name)
+            }
+            Ok(Event::NavigatingTo(_)) => self.level_name = None,
+            _ => {}
+        }
 
         Ok(())
     }
 
-    fn update_is_editing(&mut self) -> Result<()> {
-        // if let Ok(event) = self.event_receiver.try_recv() {
-        //     match event {
-        //         Event::NavigatingTo(NavigationScreens::EditLevel(level_name)) => {
-        //             self.is_editing = true
-        //         }
-        //         Event::NavigatingTo(NavigationScreens::Play(_)) => self.is_editing = false,
-        //         _ => {}
-        //     }
-        // }
+    pub fn run(
+        &mut self,
+        context: &mut Context,
+        level_manager: &LevelManager,
+        _world: &World,
+    ) -> Result<()> {
+        // We want to check if the level name exists. The only reason it doesn't is if we aren't in editing mode.
+        // So we want to exit early if we are in anything other than editing mode.
+
+        // This pattern allows us to get the level name out and also handle the none case at the same time.
+        let level_name = if let Some(level_name) = &self.level_name {
+            level_name
+        } else {
+            return Ok(());
+        };
+
+        let level = level_manager.get_level(level_name).unwrap();
+        let cell_size = self.calculate_cell_size(level, context);
+
+        let mut mesh_builder = MeshBuilder::new();
+        let line_height = level.height as f32 * cell_size;
+        let line_width = level.width as f32 * cell_size;
+
+        for count in 0..=level.width {
+            let start = ggez::mint::Point2 {
+                x: count as f32 * cell_size,
+                y: 0.0,
+            };
+            let end = ggez::mint::Point2 {
+                x: start.x,
+                y: start.y + line_height,
+            };
+            mesh_builder.line(&[start, end], 1.0, WHITE)?;
+        }
+
+        for count in 0..=level.height {
+            let start = Point::new(0.0, count as f32 * cell_size);
+            let end = Point::new(start.x + line_width, start.y);
+
+            mesh_builder.line(&[start.to_array(), end.to_array()], 1.0, WHITE)?;
+        }
+
+        let mesh = mesh_builder.build(context)?;
+        graphics::draw(context, &mesh, DrawParam::new())?;
+
         Ok(())
     }
 
@@ -100,24 +101,5 @@ impl DrawEditingLevel {
         } else {
             height
         }
-    }
-
-    fn get_current_level_name(&self, world: &World) -> Result<Option<String>> {
-        let query;
-        let (name_components, selected_components) = query!(
-            world,
-            query,
-            ComponentNames::Name.as_ref(),
-            ComponentNames::Selected.as_ref()
-        );
-
-        for (index, selected_component) in selected_components.iter().enumerate() {
-            let wrapped_selected_component: &DataWrapper<bool> = selected_component.cast()?;
-            if *wrapped_selected_component.borrow() {
-                let wrapped_name: &DataWrapper<String> = name_components[index].cast()?;
-                return Ok(Some(wrapped_name.borrow().clone()));
-            }
-        }
-        Ok(None)
     }
 }

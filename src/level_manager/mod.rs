@@ -10,7 +10,7 @@ pub struct LevelManager {
 
 impl LevelManager {
     pub fn new() -> Self {
-        let mut level = Level::new("Introduction".into(), 10, 10);
+        let mut level = Level::new("Introduction".into(), 50, 10);
         level.add_floor();
         level.add_end(25, 3);
         let level2 = Level::new("No Floor".into(), 10, 30);

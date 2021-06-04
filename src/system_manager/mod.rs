@@ -94,6 +94,7 @@ impl SystemManager {
         self.jump_system.run(world)?;
         self.collide_with_end.run(world)?;
         self.apply_friction_system.run(world)?;
+        self.draw_editing_level.update()?;
         Ok(())
     }
 
@@ -106,7 +107,7 @@ impl SystemManager {
     ) -> Result<()> {
         self.draw_text.run(world, context)?;
         self.draw_entities.run(world, context, image_manager)?;
-        // self.draw_editing_level.run(context, level_manager, world)?;
+        self.draw_editing_level.run(context, level_manager, world)?;
 
         Ok(())
     }
