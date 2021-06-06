@@ -2,6 +2,7 @@ use bbecs::{data_types::point::Point, world::DataWrapper};
 
 use crate::names::entity_states::EntityStates;
 
+#[derive(Debug)]
 pub struct GameEntity<'a> {
     pub width: f32,
     pub height: f32,
@@ -49,5 +50,9 @@ impl<'a> GameEntity<'a> {
             && self.left() < other.right()
             && self.bottom() > other.top()
             && self.top() < other.bottom()
+    }
+
+    pub fn top_left(&self) -> Point {
+        Point::new(self.left(), self.top())
     }
 }

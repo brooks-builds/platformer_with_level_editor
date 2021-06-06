@@ -11,6 +11,7 @@ use self::apply_gravity::ApplyGravitySystem;
 use self::camera::CameraSystem;
 use self::collide_with_end::CollideWithEnd;
 use self::collide_with_platform::CollideWithPlatform;
+use self::display_collision_border_system::DisplayCollisionBorderSystem;
 use self::draw_editing_level::DrawEditingLevel;
 use self::draw_selectable_text::DrawText;
 use self::editing_level_system::EditingLevelSystem;
@@ -26,6 +27,7 @@ mod apply_gravity;
 mod camera;
 mod collide_with_end;
 mod collide_with_platform;
+mod display_collision_border_system;
 mod draw_editing_level;
 mod draw_selectable_text;
 mod editing_level_system;
@@ -34,7 +36,6 @@ mod move_player;
 mod update_camera_position;
 mod update_forces;
 mod update_selected;
-mod update_state_system;
 mod update_text;
 
 pub struct SystemManager {
@@ -52,6 +53,7 @@ pub struct SystemManager {
     collide_with_end: CollideWithEnd,
     apply_friction_system: ApplyFrictionSystem,
     editing_level_system: EditingLevelSystem,
+    display_collision_border_system: DisplayCollisionBorderSystem,
 }
 
 impl SystemManager {
@@ -70,6 +72,7 @@ impl SystemManager {
         let collide_with_end = CollideWithEnd::new(&event_manager);
         let apply_friction_system = ApplyFrictionSystem;
         let editing_level_system = EditingLevelSystem::new(event_manager);
+        let display_collision_border_system = DisplayCollisionBorderSystem;
 
         Self {
             draw_text,
@@ -86,6 +89,7 @@ impl SystemManager {
             collide_with_end,
             apply_friction_system,
             editing_level_system,
+            display_collision_border_system,
         }
     }
 
@@ -120,6 +124,7 @@ impl SystemManager {
         self.draw_text.run(world, context)?;
         self.draw_entities.run(world, context, image_manager)?;
         self.draw_editing_level.run(context, level_manager, world)?;
+        self.display_collision_border_system.run(world, context)?;
 
         Ok(())
     }

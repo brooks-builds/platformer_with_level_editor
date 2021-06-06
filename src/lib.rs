@@ -84,7 +84,7 @@ impl MainState {
         self.world
             .add_resource(ResourceNames::Friction.to_string(), 0.2_f32);
         self.world
-            .add_resource(ResourceNames::MaxVelocity.to_string(), 10.0);
+            .add_resource(ResourceNames::MaxVelocity.to_string(), 15.0);
 
         self.world.register(ComponentNames::Text.to_string())?;
         self.world.register(ComponentNames::Position.to_string())?;

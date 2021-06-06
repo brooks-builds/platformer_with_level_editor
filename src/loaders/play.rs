@@ -42,7 +42,7 @@ impl PlayLoader {
                         .set_velocity(Point::new(0.0, 0.0))
                         .set_acceleration(Point::new(0.0, 0.0))
                         .set_affected_by_gravity(true)
-                        .set_height(111.0)
+                        .set_height(112.0)
                         .set_width(70.0)
                         .set_image_name(ImageName::Player.to_string())
                         .set_player()

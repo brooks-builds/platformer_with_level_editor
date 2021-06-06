@@ -1,6 +1,6 @@
 use strum_macros::{AsRefStr, ToString};
 
-#[derive(AsRefStr, ToString, PartialEq, Clone, Copy)]
+#[derive(AsRefStr, ToString, PartialEq, Clone, Copy, Debug)]
 pub enum EntityStates {
     Falling,
     Standing,
